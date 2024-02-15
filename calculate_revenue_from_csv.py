@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import os
 import logging
 from class_simulator_V0 import Transport_Simulator
 from class_revenue_results_V1 import Result
@@ -11,6 +10,7 @@ from class_revenue_results_V1 import Result
 decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
 decision_2_policy_list = ['Random', 'FCFS']
 group = 20 # 20 Seeds
+seed1 = 2005
 passenger_demand_mode_set = ['constant', 'linear']#  
 for passenger_demand_mode in passenger_demand_mode_set:
     main_dir= rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{passenger_demand_mode}'
@@ -30,13 +30,13 @@ for passenger_demand_mode in passenger_demand_mode_set:
                 avg_column = [chunk[0] for chunk in chunks]
                 avg_results[col] = avg_column
             # for avg_results, col == 'Seed_Time_Intensity, Policy'
-            # replace '2015' with 'AVG_Of_{group}'
-            def replace_2015(x):
+            # replace '2005' with 'AVG_Of_{group}'
+            def replace_seed1(x):
                 if isinstance(x, list) and len(x) > 0 and isinstance(x[0], str):
-                    x[0] = x[0].replace('2015', f'AVG_Of_{group}Seeds')
+                    x[0] = x[0].replace(f'{seed1}', f'AVG_Of_{group}Seeds')
                 return x
 
-            avg_results['Seed_Time_Intensity, Policy'] = avg_results['Seed_Time_Intensity, Policy'].apply(replace_2015)
+            avg_results['Seed_Time_Intensity, Policy'] = avg_results['Seed_Time_Intensity, Policy'].apply(replace_seed1)
 
 
             def calculate_average(group):
