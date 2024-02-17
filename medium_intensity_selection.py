@@ -9,24 +9,20 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.WARNING)
 # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 ############################################################################################
-from class_passenger_init_load_data import Passenger
-from class_cargo_request_V1 import STU_Request
-from class_train_functions_V0 import Train
-from class_policy_V0 import Policy
-from class_revenue_results_V1 import Result
-from class_simulator_V0 import Transport_Simulator
+
+from class_simulator import Transport_Simulator
 
 arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
 load_status = {}
 STU_status = {}
 results = {}
-passenger_demand_mode_set = ['constant', 'linear']
+passenger_demand_mode_set = ['constant', 'linear'] #  
 for passenger_demand_mode in passenger_demand_mode_set:
     for decision_1 in ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']: 
         for arrival_intensity in arrival_intensity_list:
             load_status[arrival_intensity] = {}
             STU_status[arrival_intensity] = {}
-            for seed in range(2005, 2015):
+            for seed in range(2005, 2025): # 
             
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 
                                             STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 

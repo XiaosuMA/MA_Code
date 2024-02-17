@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 import logging
-from class_simulator_V0 import Transport_Simulator
+from class_simulator import Transport_Simulator
 
 
 class Train_Load_Results:
@@ -66,7 +66,7 @@ class Train_Load_Results:
         average_STU_onboard = STU_onboard.mean()
 
         result = {
-            'Seed_Time_Intensity, ': [random_seed + '_' + simulation_time + '_' + STU_time_intensity],
+            'Seed_Time_Intensity': [random_seed + '_' + simulation_time + '_' + STU_time_intensity],
             'Policy': [policy],
             'Passenger_Demand_Mode': [passenger_demand_mode],
             'STU_Demand_Mode': [stu_demand_mode],

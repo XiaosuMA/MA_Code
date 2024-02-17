@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import logging
-from class_simulator_V0 import Transport_Simulator
-from class_revenue_results_V1 import Revenue_Result
+from class_simulator import Transport_Simulator
+from class_revenue_results import Revenue_Result
 
 
 

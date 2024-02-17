@@ -26,10 +26,10 @@ logger.addFilter(DebugFilter())
 ############################################################################################
 import train_timetable_S1 as Timetable
 from class_passenger_init_load_data import Passenger
-from class_cargo_request_V1 import STU_Request
-from class_train_functions_V0 import Train
-from class_policy_V0 import Policy
-from class_revenue_results_V1 import Revenue_Result
+from class_cargo_request import STU_Request
+from class_train_functions import Train
+from class_policy import Policy
+from class_revenue_results import Revenue_Result
 
 ############################################################################################
 
