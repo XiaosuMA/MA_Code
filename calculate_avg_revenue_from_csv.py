@@ -5,6 +5,84 @@ from class_simulator import Transport_Simulator
 from class_revenue_results import Revenue_Result
 
 
+# class Avg_Revenue:
+#     decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
+#     decision_2_policy_list = ['Random', 'FCFS']
+#     passenger_demand_mode_set = ['constant', 'linear']
+#     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
+#     group = 20 # 20 Seeds
+#     start_seed = 2005
+
+#     def __init__(self, selection_mode):
+#         self.selection_mode = selection_mode
+
+#     def generate_final_results(self):
+#         if self.selection_mode == 'Policy_Selection':
+#             for passenger_demand_mode in Avg_Revenue.passenger_demand_mode_set:
+#                 main_dir= rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{passenger_demand_mode}'
+#                 for d_1 in Avg_Revenue.decision_1_policy_list:
+#                     for d_2 in Avg_Revenue.decision_2_policy_list:
+#                         sub_dir= f'Policy_{d_1}_{d_2}'
+#                         result = Revenue_Result(main_dir, sub_dir, selection_mode = self.selection_mode)
+#                         final_results = result.calculate_total_revenue_for_instance()
+#                         print(final_results)
+
+#                         results, avg_results = self.initialize_avg_results(final_results)
+#                         avg_results['Seed_Time_Intensity, Policy'] = avg_results['Seed_Time_Intensity, Policy'].apply(self.replace_start_seed)
+
+
+#                         # Exclude the columns 'Seed_Time_Intensity, Policy' and 'Passenger_Demand_Mode, STU_Demand_Mode'
+#                         columns_to_process = [col for col in results.columns if col not in ['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode']]
+
+#                         for col in columns_to_process:
+#                             # Convert the series to a list of lists
+#                             column_data = results[col].tolist()
+
+#                             # Group the list into chunks of 10
+#                             chunks = [column_data[i:i + Avg_Revenue.group] for i in range(0, len(column_data), Avg_Revenue.group)]
+
+#                             # Calculate the average for each group
+#                             avg_column = [self.calculate_average(chunk) for chunk in chunks]
+
+#                             # Add the averaged column to the new dataframe
+#                             avg_results[col] = avg_column
+
+#                         # Now avg_results contains the averaged data
+#                         avg_results.reset_index(drop=True, inplace=True)
+
+#                         avg_results = avg_results.applymap(self.remove_brackets)
+
+#                         avg_results.to_csv(rf'{main_dir}\avg_results_{d_1}_{d_2}.csv', index = False)
+                        
+
+#     def initialize_avg_results(self, final_results):
+#         results = final_results.copy()
+#         avg_results = pd.DataFrame()
+
+#         for col in ['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode']:
+#             column_data = results[col].tolist()
+#             chunks = [column_data[i:i + Avg_Revenue.group] for i in range(0, len(column_data), Avg_Revenue.group)]
+#             avg_column = [chunk[0] for chunk in chunks]
+#             avg_results[col] = avg_column
+#         return results, avg_results
+    
+
+#     def replace_start_seed(self, x):
+#         if isinstance(x, list) and len(x) > 0 and isinstance(x[0], str):
+#             x[0] = x[0].replace(f'{Avg_Revenue.start_seed}', f'AVG_Of_{Avg_Revenue.group}Seeds')
+#         else:
+#             raise ValueError('The input is not a list')
+#         return x
+#     def calculate_average(self, chunk):
+#         avg1 = np.round(sum([x[0] for x in chunk]) / len(chunk), 3)
+#         avg2 = np.round(sum([x[1] for x in chunk]) / len(chunk), 3)
+#         return [avg1, avg2]
+#     def remove_brackets(self, cell):
+#         if isinstance(cell, list):
+#             return ', '.join(map(str, cell))
+#         return cell
+
+############################################################################################################################################################################
 
 # For Policy:
 decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
@@ -72,13 +150,13 @@ for passenger_demand_mode in passenger_demand_mode_set:
 
             avg_results.to_csv(rf'{main_dir}\avg_results_{d_1}_{d_2}.csv', index = False)
 
-############################################################################################################
+# ############################################################################################################
 
 # # For STU_Time_Intensity_Selection:
 # arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
 # group = 20  # 20 Seeds
 # seed1 = 2005
-# passenger_demand_mode_set = ['constant', 'linear']
+# passenger_demand_mode_set = ['constant', 'linear'] 
 # for passenger_demand_mode in passenger_demand_mode_set:
 #     main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}'
 #     for intensity in arrival_intensity_list:

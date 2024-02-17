@@ -4,21 +4,28 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 total_seeds = 20
-avg_intensity0p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity0.5.csv')
-avg_intensity1 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity1.0.csv')
-avg_intensity1p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity1.5.csv')
-avg_intensity2 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity2.0.csv')
-avg_intensity2p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity2.5.csv')
-avg_intensity3 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity3.0.csv')
-avg_intensity3p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity3.5.csv')
+# passenger_demand_mode = 'constant'  # 'constant' or 'linear'
+passenger_demand_mode = 'linear'  # 'constant' or 'linear'
 
-# avg_intensity0p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity0.5.csv')
-# avg_intensity1 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity1.0.csv')
-# avg_intensity1p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity1.5.csv')
-# avg_intensity2 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity2.0.csv')
-# avg_intensity2p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity2.5.csv')
-# avg_intensity3 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity3.0.csv')
-# avg_intensity3p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity3.5.csv')
+
+if passenger_demand_mode == 'constant':
+    avg_intensity0p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity0.5.csv')
+    avg_intensity1 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity1.0.csv')
+    avg_intensity1p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity1.5.csv')
+    avg_intensity2 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity2.0.csv')
+    avg_intensity2p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity2.5.csv')
+    avg_intensity3 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity3.0.csv')
+    avg_intensity3p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/avg_results_intensity3.5.csv')
+elif passenger_demand_mode == 'linear':
+    avg_intensity0p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity0.5.csv')
+    avg_intensity1 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity1.0.csv')
+    avg_intensity1p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity1.5.csv')
+    avg_intensity2 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity2.0.csv')
+    avg_intensity2p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity2.5.csv')
+    avg_intensity3 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity3.0.csv')
+    avg_intensity3p5 = pd.read_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear/avg_results_intensity3.5.csv')
+else:
+    print('Please specify the passenger_demand_mode as constant or linear')
 
 
 
@@ -78,7 +85,7 @@ plt.ylabel('Average Revenue')  # Label for y-axis
 plt.legend()
 plt.xticks(rotation=90)  # Rotate x-axis labels
 plt.tight_layout()
-plt.savefig(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/Intensity_vs_Avg_Revenue_Total_With_Intensity.png', dpi = 300)
+plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}/Intensity_vs_Avg_Revenue_Total_With_Intensity.png', dpi = 300)
 plt.show()
 
 ############################################################################################################
@@ -103,7 +110,7 @@ plt.ylabel('Imaginary_Revenue, PRT to %')  # Label for y-axis
 plt.legend()
 plt.xticks(rotation=90)  # Rotate x-axis labels
 plt.tight_layout()  
-plt.savefig(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/Intensity_vs_Imaginary_Revenue_PRT_to_%.png', dpi = 300)
+plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}/Intensity_vs_Imaginary_Revenue_PRT_to_%.png', dpi = 300)
 plt.show()
 
 
@@ -135,7 +142,7 @@ plt.xticks(rotation=90)  # Rotate x-axis labels
 # Set the limits of the y-axis to only show positive values
 plt.ylim(bottom=0)
 plt.tight_layout()
-plt.savefig(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/Intensity_vs_Reject_All_Revenue_PRT%.png', dpi = 300)
+plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}/Intensity_vs_Reject_All_Revenue_PRT%.png', dpi = 300)
 plt.show()
 
 
@@ -162,7 +169,7 @@ plt.ylabel('Delay_0_delivery')  # Label for y-axis
 plt.legend()
 plt.xticks(rotation=90)  # Rotate x-axis labels
 plt.tight_layout()
-plt.savefig(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/Intensity_vs_Delay_0_delivery_%_Accepted.png', dpi = 300)
+plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}/Intensity_vs_Delay_0_delivery_%_Accepted.png', dpi = 300)
 plt.show()
 
 
@@ -192,7 +199,7 @@ plt.ylabel('Delivery (% Total)')  # Label for y-axis
 plt.legend()   
 plt.xticks(rotation=90)  # Rotate x-axis labels
 plt.tight_layout()
-plt.savefig(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/Intensity_vs_Delivery_%_Total.png', dpi = 300)
+plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}/Intensity_vs_Delivery_%_Total.png', dpi = 300)
 plt.show()
 
 
@@ -218,5 +225,5 @@ plt.ylabel('Delay_true_waiting, % to Accepted')  # Label for y-axis
 plt.legend()
 plt.xticks(rotation=90)  # Rotate x-axis labels
 plt.tight_layout()
-plt.savefig(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant/Intensity_vs_Delay_true_waiting_%_to_Accepted.png', dpi = 300)
+plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}/Intensity_vs_Delay_true_waiting_%_to_Accepted.png', dpi = 300)
 plt.show()
