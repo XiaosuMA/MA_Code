@@ -29,7 +29,7 @@ from class_passenger_init_load_data import Passenger
 from class_cargo_request_V1 import STU_Request
 from class_train_functions_V0 import Train
 from class_policy_V0 import Policy
-from class_revenue_results_V1 import Result
+from class_revenue_results_V1 import Revenue_Result
 
 ############################################################################################
 
@@ -304,7 +304,7 @@ class Transport_Simulator:
     def get_revenue_data(self):
         main_dir, sub_dir = self.directory_of_selection_mode()
 
-        revenue_instance = Result(main_dir, sub_dir, self.selection_mode)
+        revenue_instance = Revenue_Result(main_dir, sub_dir, self.selection_mode)
         revenue_result = revenue_instance.calculate_total_revenue_for_instance()
         return revenue_result
     

@@ -5,15 +5,15 @@ import logging
     
 # Only Delay <= 30 still generate revenue, when accepted
 # Exceeding simulation time, still waiting status STU, if with any delay, will not generate revenue
-# Exceeding simulation time, still waiting status STU, if without delay, handel as rejected, will generate revenue(3.5)
-# Rejected requests generate same revenue (3.5) slight lower than the lowest Revenue per STU (4)
+# Exceeding simulation time, still waiting status STU, if without delay, handel as rejected, will generate revenue(4.5)
+# Rejected requests generate same revenue (4.5) slight lower than the lowest Revenue per STU (5.0) with ÖPNV
 # effective revenue of accepted STU, depends on the delay:
 # Delay = 0, 100% the revenue of individual STU
-# Delay = 0-15, 75% the revenue of individual STU
-# Delay = 15-30, 50% the revenue of individual STU
+# Delay = 0-15, 50% the revenue of individual STU
+# Delay = 15-30, 25% the revenue of individual STU
 # Delay > 30, 0% the revenue of individual STU
 
-class Result:
+class Revenue_Result:
     revenue_of_rejection_or_uncompletion = 4.5 # slightly lower than lowest STU revenue with ÖPNV
     revenue_rate_of_delay_0_15 = 0.5
     revenue_rate_of_delay_15_30 = 0.25
@@ -52,7 +52,7 @@ class Result:
                                 stu_demand_mode = parts[2].split('_Seed')[0]
                             else:
                                 # Handle the case where there were less than 2 'STU's
-                                # For example, you could set stu_demand_mode to None or to an empty string
+                                # For example, set stu_demand_mode to None or to an empty string
                                 stu_demand_mode = None
 
                             random_seed = file.split('_Seed')[1].split('_Time')[0]
@@ -81,8 +81,8 @@ class Result:
                             if len(parts) >= 3:  # If there are at least 3 parts, then there were at least 2 'STU's
                                 stu_demand_mode = parts[2].split('_Seed')[0]
                             else:
-                                # Handle the case where there were less than 2 'STU's
-                                # For example, you could set stu_demand_mode to None or to an empty string
+                                # Handle the case where there were less than 2 'STU's string
+                                # For example, set stu_demand_mode to None or to an empty string
                                 stu_demand_mode = None
 
                             random_seed = file.split('_Seed')[1].split('_Time')[0]
@@ -135,14 +135,13 @@ class Result:
         status_0 = cond_status_0.sum()
         STU_Total = status_0 + status_1 + status_2 + status_3
         STU_Accepted = status_1 + status_2 + status_3
-        # STU_Total = len(STU_requests_df)
         
-        revenue_1 = Result.revenue_of_rejection_or_uncompletion * (status_0 + delay_0_waiting + delay_nan_waiting)
+        revenue_1 = Revenue_Result.revenue_of_rejection_or_uncompletion * (status_0 + delay_0_waiting + delay_nan_waiting)
         revenue_2 = STU_requests_df.loc[cond_status_2 & cond_delay_0, 'Revenue'].sum()
         revenue_3 = STU_requests_df.loc[cond_status_3 & cond_delay_0, 'Revenue'].sum()
-        revenue_4 = Result.revenue_rate_of_delay_0_15 * STU_requests_df.loc[(cond_status_2 | cond_status_3) & cond_delay_0_15, 'Revenue'].sum()
-        revenue_5 = Result.revenue_rate_of_delay_15_30 * STU_requests_df.loc[(cond_status_2 | cond_status_3) & cond_delay_15_30, 'Revenue'].sum()
-        penalty_delay_true_waiting = Result.delay_0_15_waiting_penalty * delay_0_15_waiting + Result.delay_15_30_waiting_penalty * delay_15_30_waiting + Result.delay_gt_30_waiting_penalty * delay_gt_30_waiting
+        revenue_4 = Revenue_Result.revenue_rate_of_delay_0_15 * STU_requests_df.loc[(cond_status_2 | cond_status_3) & cond_delay_0_15, 'Revenue'].sum()
+        revenue_5 = Revenue_Result.revenue_rate_of_delay_15_30 * STU_requests_df.loc[(cond_status_2 | cond_status_3) & cond_delay_15_30, 'Revenue'].sum()
+        penalty_delay_true_waiting = Revenue_Result.delay_0_15_waiting_penalty * delay_0_15_waiting + Revenue_Result.delay_15_30_waiting_penalty * delay_15_30_waiting + Revenue_Result.delay_gt_30_waiting_penalty * delay_gt_30_waiting
         total_revenue = np.round(revenue_1 + revenue_2 + revenue_3 + revenue_4 + revenue_5 - penalty_delay_true_waiting, 6)
         imaginary_revenue = np.round(STU_requests_df['Revenue'].sum(), 6)   # if we get all revenues, without any rejection or delay
         # print(f'revenue_1 = {revenue_1}, revenue_2 = {revenue_2}, revenue_3 = {revenue_3}, revenue_4 = {revenue_4}, revenue_5 = {revenue_5}, total_revenue = {total_revenue}')
@@ -155,8 +154,8 @@ class Result:
             'Passenger_Demand_Mode, STU_Demand_Mode': [[Passenger_Demand_Mode, STU_Demand_Mode]],
             'STU_Total, Revenue_Total': [[STU_Total, total_revenue]],
             'Imaginary_Revenue, PRT to %': [[imaginary_revenue, np.round(total_revenue / imaginary_revenue, 3)]],
-            'Reject_All_Revenue, PRT to %': [[STU_Total * Result.revenue_of_rejection_or_uncompletion, 
-                                              total_revenue/np.round(STU_Total * Result.revenue_of_rejection_or_uncompletion, 3)]],
+            'Reject_All_Revenue, PRT to %': [[STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion, 
+                                              total_revenue/np.round(STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion, 3)]],
             'Delay_0_delivery (% Accepted)': [[delay_0_delivery, np.round(delay_0_delivery / STU_Accepted, 3)]],
             'Delay_0_15_delivery': [[delay_0_15_delivery, np.round(delay_0_15_delivery / STU_Accepted, 3)]],
             'Delay_15_30_delivery': [[delay_15_30_delivery, np.round(delay_15_30_delivery / STU_Accepted, 3)]],
@@ -179,7 +178,7 @@ class Result:
 # intensity = 1.0
 # main_dir= r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant'
 # sub_dir= f'Intensity_{intensity}'
-# result = Result(main_dir, sub_dir, selection_mode = 'STU_Time_Intensity_Selection')
+# result = Revenue_Result(main_dir, sub_dir, selection_mode = 'STU_Time_Intensity_Selection')
 # final_results = result.calculate_total_revenue_for_instance()
     
 # Policy_Selection
@@ -187,7 +186,7 @@ class Result:
 # d_2 = 'FCFS'
 # main_dir = r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_linear'
 # sub_dir = f'Policy_{d_1}_{d_2}'
-# result = Result(main_dir, sub_dir, selection_mode = 'Policy_Selection')
+# result = Revenue_Result(main_dir, sub_dir, selection_mode = 'Policy_Selection')
 # final_results = result.calculate_total_revenue_for_instance()
 
 

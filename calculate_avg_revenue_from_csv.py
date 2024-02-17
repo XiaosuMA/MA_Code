@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import logging
 from class_simulator_V0 import Transport_Simulator
-from class_revenue_results_V1 import Result
+from class_revenue_results_V1 import Revenue_Result
 
 
 
@@ -17,7 +17,7 @@ for passenger_demand_mode in passenger_demand_mode_set:
     for d_1 in decision_1_policy_list:
         for d_2 in decision_2_policy_list:
             sub_dir= f'Policy_{d_1}_{d_2}'
-            result = Result(main_dir, sub_dir, selection_mode = 'Policy_Selection')
+            result = Revenue_Result(main_dir, sub_dir, selection_mode = 'Policy_Selection')
             final_results = result.calculate_total_revenue_for_instance()
             print(final_results)
 
@@ -83,7 +83,7 @@ for passenger_demand_mode in passenger_demand_mode_set:
 #     main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}'
 #     for intensity in arrival_intensity_list:
 #         sub_dir= f'Intensity_{intensity}'
-#         result = Result(main_dir, sub_dir, selection_mode = 'STU_Time_Intensity_Selection')
+#         result = Revenue_Result(main_dir, sub_dir, selection_mode = 'STU_Time_Intensity_Selection')
 #         final_results = result.calculate_total_revenue_for_instance()
 #         print(final_results)
 
