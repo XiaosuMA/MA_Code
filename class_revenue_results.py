@@ -155,7 +155,7 @@ class Revenue_Result:
             'STU_Total, Revenue_Total': [[STU_Total, total_revenue]],
             'Imaginary_Revenue, PRT to %': [[imaginary_revenue, np.round(total_revenue / imaginary_revenue, 3)]],
             'Reject_All_Revenue, PRT to %': [[STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion, 
-                                              total_revenue/np.round(STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion, 3)]],
+                                              np.round(total_revenue / (STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion), 3)]],
             'Delay_0_delivery (% Accepted)': [[delay_0_delivery, np.round(delay_0_delivery / STU_Accepted, 3)]],
             'Delay_0_15_delivery': [[delay_0_15_delivery, np.round(delay_0_15_delivery / STU_Accepted, 3)]],
             'Delay_15_30_delivery': [[delay_15_30_delivery, np.round(delay_15_30_delivery / STU_Accepted, 3)]],

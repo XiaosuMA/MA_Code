@@ -109,7 +109,7 @@ class Policy_Plot:
         if self.passenger_demand_mode == 'constant':
             plt.ylim([1600, max(revenues) + 100])
         elif self.passenger_demand_mode == 'linear':
-            plt.ylim([600, max(revenues) + 100])
+            plt.ylim([1600, max(revenues) + 100])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Revenue_Total_vs_Policy.png')
         plt.show()
@@ -165,9 +165,9 @@ class Policy_Plot:
         plt.legend()
         plt.xticks(rotation=60)  # Rotate x-axis labels
         if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.4)
+            plt.ylim(bottom=0.8)
         elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.4)
+            plt.ylim(bottom=0.8)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Reject_All_Revenue_vs_Policy.png')
         plt.show()
@@ -214,6 +214,10 @@ class Policy_Plot:
         plt.axhline(y=0.6, color='black', linestyle='--')  # Add horizontal dashed line at y=0.6, 60% of total STU
         plt.legend()
         plt.xticks(rotation=60)  # Rotate x-axis labels
+        if self.passenger_demand_mode == 'constant':
+            plt.ylim(bottom=0.3)
+        elif self.passenger_demand_mode == 'linear':
+            plt.ylim(bottom=0.3)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Delivery_(% Total)_vs_Policy.png')
         plt.show()

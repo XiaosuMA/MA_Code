@@ -4,25 +4,30 @@ import numpy as np
 import logging
 import os
 ############################################################################################
-# logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
-# logging.basicConfig(level=logging.CRITICAL + 1)
-# DEBUG, INFO, WARNING, ERROR, CRITICAL
-
-# Set up logging
-# level = logging.DEBUG
-# level = logging.INFO
-# level = logging.WARNING
-# level = logging.ERROR
-level = logging.CRITICAL
-logging.basicConfig(format='%(levelname)s: %(message)s')
-logger = logging.getLogger()
-logger.setLevel(level)
-
+# # Set up logging
+# # level = logging.DEBUG
+# # level = logging.INFO
+# # level = logging.WARNING
+# # level = logging.ERROR
+# # level = logging.CRITICAL
+# # logging.basicConfig(level=logging.CRITICAL + 1)
+# # DEBUG, INFO, WARNING, ERROR, CRITICAL
 class DebugFilter(logging.Filter):
-    def filter(self, record):
-        return record.levelno == level
+    def __init__(self, level):
+        self.level = level
 
-logger.addFilter(DebugFilter())
+    def filter(self, record):
+        return record.levelno == self.level
+
+def set_logging_level(level, filter: bool):
+    logging.basicConfig(format='%(levelname)s: %(message)s')
+    logger = logging.getLogger()
+    logger.setLevel(level)
+    if filter:
+        logger.addFilter(DebugFilter(level))
+    else:
+        logger.setLevel(level)
+
 ############################################################################################
 import train_timetable_S1 as Timetable
 from class_passenger_init_load_data import Passenger
@@ -31,8 +36,8 @@ from class_train_functions import Train
 from class_policy import Policy
 from class_revenue_results import Revenue_Result
 
+set_logging_level(logging.CRITICAL, filter = True)
 ############################################################################################
-
 
 class Transport_Simulator:
     # constants
@@ -44,6 +49,8 @@ class Transport_Simulator:
     train_0_arrival_last_stop_time = 75.0
     test_cargo_time_intensity_set  = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
     cargo_time_intensity_set = [2.0, 2.1, 2.2, 2.3, 2.4, 2.5]
+    passenger_baseline_intensity_over_time_set = ['constant', 'linear']
+
 
     def __init__(self, passenger_baseline_intensity_over_time: str, 
                  STU_arrival_over_time: str, STU_arrival_over_station: str, 
@@ -94,6 +101,8 @@ class Transport_Simulator:
                                                STU_arrival_over_station = self.STU_arrival_over_station, 
                                                random_seed = self.random_seed, simulation_time = self.simulation_time, 
                                                intensity_medium = self.avg_cargo_intensity)
+        elif self.selection_mode == 'Sensitivity_Analysis':
+            pass    
         else:
             raise ValueError("Invalid selection_mode: Not defined selection_mode.")
 
@@ -229,11 +238,8 @@ class Transport_Simulator:
 
     def directory_of_selection_mode(self):
         if self.selection_mode == 'Policy_Selection':
-            if self.passenger_baseline_intensity_over_time == 'constant':
-                main_dir = r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_constant'
-                sub_dir = f'Policy_{self.decision_1_policy}_{self.decision_2_policy}'
-            elif self.passenger_baseline_intensity_over_time == 'linear':
-                main_dir = r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_linear'
+            if self.passenger_baseline_intensity_over_time in Transport_Simulator.passenger_baseline_intensity_over_time_set:
+                main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\Passenger_{self.passenger_baseline_intensity_over_time}'
                 sub_dir = f'Policy_{self.decision_1_policy}_{self.decision_2_policy}'
             else:
                 raise ValueError("Invalid passenger_baseline_intensity_over_time") 
@@ -241,11 +247,8 @@ class Transport_Simulator:
         elif self.selection_mode == 'STU_Time_Intensity_Selection':     
             STU_time_intensity = np.round(1/self.stu_request_instance.initialize_STU_arrival_interval(), 3) # Get value of STU_time_intensity
             if STU_time_intensity in Transport_Simulator.test_cargo_time_intensity_set:
-                if self.passenger_baseline_intensity_over_time == 'constant':
-                    main_dir = r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant'
-                    sub_dir = f'Intensity_{STU_time_intensity}'
-                elif self.passenger_baseline_intensity_over_time == 'linear':
-                    main_dir = r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_linear'
+                if self.passenger_baseline_intensity_over_time in Transport_Simulator.passenger_baseline_intensity_over_time_set:
+                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Output\Passenger_{self.passenger_baseline_intensity_over_time}'
                     sub_dir = f'Intensity_{STU_time_intensity}'
                 else:
                     raise ValueError("Invalid passenger_baseline_intensity_over_time")
@@ -311,8 +314,8 @@ class Transport_Simulator:
 
 # test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
 #                                 STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 
-#                                decision_1_policy = 'Available_Train_1', decision_2_policy = 'FCFS', 
-#                                selection_mode='STU_Time_Intensity_Selection', set_intensity_medium = 2.0,
+#                                decision_1_policy = 'Accept_All', decision_2_policy = 'FCFS', 
+#                                selection_mode='STU_Time_Intensity_Selection', set_intensity_medium = 4.0,
 #                                operation_time = 180, random_seed = 2023)
 
 
