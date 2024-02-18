@@ -8,19 +8,32 @@ class Policy_Plot:
     # Policy:
     decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
     decision_2_policy_list = ['Random', 'FCFS']
+    passenger_demand_mode_set = ['constant', 'linear']
+    data_description_set = ['train_load', 'request']
 
-    def __init__(self, passenger_demand_mode: str):
+    def __init__(self, passenger_demand_mode: str, data_description: str):
         self.passenger_demand_mode = passenger_demand_mode
+        self.data_description = data_description
 
     def plot_all(self):
-        avg_results = self.concat_avg_results()
-        self.plot_delay_distribution(avg_results)
-        self.plot_revenue_total(avg_results)
-        self.plot_imaginary_revenue_percentage(avg_results)
-        self.plot_reject_all_revenue_percentage(avg_results)
-        self.plot_delay_0_delivery_percentage(avg_results)
-        self.plot_delivery_percentage(avg_results)
-        self.plot_delay_true_waiting_percentage(avg_results)
+        if self.data_description == 'request':
+            avg_results = self.concat_avg_results()
+            self.plot_delay_distribution(avg_results)
+            self.plot_revenue_total(avg_results)
+            self.plot_imaginary_revenue_percentage(avg_results)
+            self.plot_reject_all_revenue_percentage(avg_results)
+            self.plot_delay_0_delivery_percentage(avg_results)
+            self.plot_delivery_percentage(avg_results)
+            self.plot_delay_true_waiting_percentage(avg_results)
+        elif self.data_description == 'train_load':
+            avg_results = self.concat_avg_results()
+            print(avg_results)
+            self.plot_avg_total_passenger_extra(avg_results)
+            self.plot_avg_train_load_percentage(avg_results)
+            self.plot_avg_stu_onboard(avg_results)
+        else:
+            raise ValueError('Invalid data_description, please choose from "request" or "train_load"')
+        
 
     def concat_avg_results(self):
         policy_list = []
@@ -30,22 +43,36 @@ class Policy_Plot:
                 policy = f'{d_1}_{d_2}'
                 policy_list.append(policy)
         print(policy_list)
+        if self.data_description == 'request':
+            for policy_item in policy_list:
+                one_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\avg_results_{policy_item}.csv')
+                avg_results = pd.concat([avg_results, one_result], ignore_index=True)
+
+            avg_results.reset_index(drop = True, inplace = True)
+            # Create abbreviation for Policies: for example, 'Available_Train_1_Random' -> 'A_T_1_R'
+            for row in range(len(avg_results)):
+                policy = avg_results.loc[row,'Seed_Time_Intensity, Policy'].split(',')[1].strip()
+                policy = '_'.join([word[0] for word in policy.split('_')])
+                avg_results.loc[row,'Policy_abbr'] = policy
+            return avg_results
         
-        for policy_item in policy_list:
-            one_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\avg_results_{policy_item}.csv')
-            avg_results = pd.concat([avg_results, one_result], ignore_index=True)
+        elif self.data_description == 'train_load':
+            for policy_item in policy_list:
+                one_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\avg_train_load_{policy_item}.csv')
+                avg_results = pd.concat([avg_results, one_result], ignore_index=True)
 
-        avg_results.reset_index(drop = True, inplace = True)
+            avg_results.reset_index(drop = True, inplace = True)
+            # Create abbreviation for Policies: for example, 'Available_Train_1_Random' -> 'A_T_1_R'
+            for row in range(len(avg_results)):
+                policy = avg_results.loc[row,'Policy'].strip()
+                policy = '_'.join([word[0] for word in policy.split('_')])
+                avg_results.loc[row,'Policy_abbr'] = policy
+            return avg_results
+        else:
+            raise ValueError('Invalid data_description, please choose from "request" or "train_load"')
 
-
-        # Create abbreviation for Policies: for example, 'Available_Train_1_Random' -> 'A_T_1_R'
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Seed_Time_Intensity, Policy'].split(',')[1].strip()
-            policy = '_'.join([word[0] for word in policy.split('_')])
-            avg_results.loc[row,'Policy_abbr'] = policy
-        return avg_results
-
-
+############################################################################################################
+        
     # Plot distribution of Delay_0_delivery (% Accepted), Delay_0_15_delivery, Delay_15_30_delivery, Delay_gt_30_delivery, Delay_0_waiting, Delay_nan_waiting(late_arrival), Delay_true_waiting
     def plot_delay_distribution(self, avg_results: pd.DataFrame):
         # Create subplots outside of the loop
@@ -242,7 +269,74 @@ class Policy_Plot:
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Delay_true_waiting_vs_Policy.png')
         plt.show()
 
+############################################################################################################
+# plot Total_Passenger_Extra for all Policy_abbr
+    def plot_avg_total_passenger_extra(self, avg_results: pd.DataFrame):
+        x_ticks = []
+        y = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            total_passenger_extra = float(avg_results.loc[row,'Total_Passenger_Extra'])
+            x_ticks.append(policy)
+            y.append(total_passenger_extra)
 
-plots = Policy_Plot('linear')
-plots.plot_all()
+        plt.bar(x_ticks,y, label='Total_Passenger_Extra', alpha=0.5)
+        plt.title('Policy vs Total_Passenger_Extra')
+        plt.xlabel('Policy')  # Label for x-axis
+        plt.ylabel('Avg_Total_Passenger_Extra')  # Label for y-axis
+        plt.legend()
+        plt.xticks(rotation=60)  # Rotate x-axis labels
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Total_Passenger_Extra_vs_Policy.png')
+        plt.show()       
 
+# plot Average_Train_Load_Percentage for all Policy_abbr
+    def plot_avg_train_load_percentage(self, avg_results: pd.DataFrame):
+        x_ticks = []
+        y = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            avg_train_load_percentage = float(avg_results.loc[row,'Average_Train_Load_Percentage'])
+            x_ticks.append(policy)
+            y.append(avg_train_load_percentage)
+
+        plt.bar(x_ticks,y, label='Average_Train_Load_Percentage', alpha=0.5)
+        plt.title('Policy vs Average_Train_Load_Percentage')
+        plt.xlabel('Policy')  # Label for x-axis
+        plt.ylabel('Avg_Average_Train_Load_Percentage')  # Label for y-axis
+        plt.legend()
+        plt.xticks(rotation=60)  # Rotate x-axis labels
+        plt.ylim(bottom=0.675)
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Average_Train_Load_Percentage_vs_Policy.png')
+        plt.show()
+
+# plot Average_STU_Onboard for all Policy_abbr
+    def plot_avg_stu_onboard(self, avg_results: pd.DataFrame):
+        x_ticks = []
+        y = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            avg_stu_onboard = float(avg_results.loc[row,'Average_STU_Onboard'])
+            x_ticks.append(policy)
+            y.append(avg_stu_onboard)
+
+        plt.bar(x_ticks,y, label='Average_STU_Onboard', alpha=0.5)
+        plt.title('Policy vs Average_STU_Onboard')
+        plt.xlabel('Policy')  # Label for x-axis
+        plt.ylabel('Avg_Average_STU_Onboard')  # Label for y-axis
+        plt.legend()
+        plt.xticks(rotation=60)  # Rotate x-axis labels
+        plt.ylim(bottom=2.5)
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Average_STU_Onboard_vs_Policy.png')
+        plt.show()
+
+############################################################################################################
+
+
+# plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
+# plots.plot_all()
+
+# plots = Policy_Plot(passenger_demand_mode='linear', data_description='train_load')
+# plots.plot_all()
