@@ -248,7 +248,7 @@ class Transport_Simulator:
             STU_time_intensity = np.round(1/self.stu_request_instance.initialize_STU_arrival_interval(), 3) # Get value of STU_time_intensity
             if STU_time_intensity in Transport_Simulator.test_cargo_time_intensity_set:
                 if self.passenger_baseline_intensity_over_time in Transport_Simulator.passenger_baseline_intensity_over_time_set:
-                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Output\Passenger_{self.passenger_baseline_intensity_over_time}'
+                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\Passenger_{self.passenger_baseline_intensity_over_time}'
                     sub_dir = f'Intensity_{STU_time_intensity}'
                 else:
                     raise ValueError("Invalid passenger_baseline_intensity_over_time")

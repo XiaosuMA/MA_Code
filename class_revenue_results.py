@@ -176,7 +176,7 @@ class Revenue_Result:
         
 ## STU_Time_Intensity_Selection:
 # intensity = 1.0
-# main_dir= r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_constant'
+# main_dir= r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_constant'
 # sub_dir= f'Intensity_{intensity}'
 # result = Revenue_Result(main_dir, sub_dir, selection_mode = 'STU_Time_Intensity_Selection')
 # final_results = result.calculate_total_revenue_for_instance()

@@ -42,14 +42,14 @@ class Intensity_Plot:
         if self.data_description == 'request':
             if self.passenger_demand_mode in Intensity_Plot.passenger_demand_mode_set:
                 for intensity in Intensity_Plot.cargo_arrival_intensity_set:
-                    avg_intensity_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/avg_results_intensity{intensity}.csv')
+                    avg_intensity_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/avg_results_intensity{intensity}.csv')
                     data_list.append(avg_intensity_result)
             else:
                 print('Please specify the passenger_demand_mode as constant or linear')
         elif self.data_description == 'train_load':
             if self.passenger_demand_mode in Intensity_Plot.passenger_demand_mode_set:
                 for intensity in Intensity_Plot.cargo_arrival_intensity_set:
-                    avg_intensity_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/avg_train_load_intensity{intensity}.csv')
+                    avg_intensity_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/avg_train_load_intensity{intensity}.csv')
                     data_list.append(avg_intensity_result)
             else:
                 print('Please specify the passenger_demand_mode as constant or linear')
@@ -115,7 +115,7 @@ class Intensity_Plot:
         plt.legend()
         plt.xticks(rotation=90)  # Rotate x-axis labels
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Revenue_Total_With_Intensity.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Revenue_Total_With_Intensity.png', dpi = 300)
         plt.show()
     
     def plot_imaginary_revenue_percentage(self, data_list):
@@ -140,7 +140,7 @@ class Intensity_Plot:
         plt.legend()
         plt.xticks(rotation=90)  # Rotate x-axis labels
         plt.tight_layout()  
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Imaginary_Revenue_PRT_to_%.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Imaginary_Revenue_PRT_to_%.png', dpi = 300)
         plt.show()
 
     def plot_reject_all_percentage(self, data_list):
@@ -170,7 +170,7 @@ class Intensity_Plot:
         # Set the limits of the y-axis to only show positive values
         plt.ylim(bottom=0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Reject_All_Revenue_PRT%.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Reject_All_Revenue_PRT%.png', dpi = 300)
         plt.show()
 
 
@@ -196,7 +196,7 @@ class Intensity_Plot:
         plt.legend()
         plt.xticks(rotation=90)  # Rotate x-axis labels
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_0_delivery_%_Accepted.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_0_delivery_%_Accepted.png', dpi = 300)
         plt.show()
 
     def plot_delivery_percentage(self, data_list):
@@ -223,7 +223,7 @@ class Intensity_Plot:
         plt.legend()   
         plt.xticks(rotation=90)  # Rotate x-axis labels
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delivery_%_Total.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delivery_%_Total.png', dpi = 300)
         plt.show()
 
     def plot_delay_true_waiting(self, data_list):
@@ -247,7 +247,7 @@ class Intensity_Plot:
         plt.legend()
         plt.xticks(rotation=90)  # Rotate x-axis labels
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_true_waiting_%_to_Accepted.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_true_waiting_%_to_Accepted.png', dpi = 300)
         plt.show()
 
 ############################################################################################################################################################################
@@ -271,7 +271,7 @@ class Intensity_Plot:
         plt.ylabel('Average Total Passenger Extra')
         plt.legend()
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Total_Passenger_Extra.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Total_Passenger_Extra.png', dpi = 300)
         plt.show()
 
     def plot_avg_train_load_percentage(self, data_list):
@@ -293,7 +293,7 @@ class Intensity_Plot:
         plt.ylabel('Average Train Load Percentage')
         plt.legend()
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Train_Load_Percentage.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Train_Load_Percentage.png', dpi = 300)
         plt.show()
                 
     def plot_avg_stu_onboard(self, data_list):
@@ -315,7 +315,7 @@ class Intensity_Plot:
         plt.ylabel('Average STU Onboard')
         plt.legend()
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_STU_Onboard.png', dpi = 300)
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_STU_Onboard.png', dpi = 300)
         plt.show()
 
 

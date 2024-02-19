@@ -47,17 +47,17 @@ for passenger_demand_mode in passenger_demand_mode_set:
 # print(results[3])
 
 # results_p5 = pd.DataFrame(results[0.5])
-# results_p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Output/revenue_results_0.5_medium_intensity_selection.csv')
+# results_p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_0.5_medium_intensity_selection.csv')
 # results_1 = pd.DataFrame(results[1])
-# results_1.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Output/revenue_results_1.0_medium_intensity_selection.csv')
+# results_1.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_1.0_medium_intensity_selection.csv')
 # results_1p5 = pd.DataFrame(results[1.5])
-# results_1p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Output/revenue_results_1.5_medium_intensity_selection.csv')
+# results_1p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_1.5_medium_intensity_selection.csv')
 # results_2 = pd.DataFrame(results[2])
-# results_2.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Output/revenue_results_2.0_medium_intensity_selection.csv')
+# results_2.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_2.0_medium_intensity_selection.csv')
 # results_2p5 = pd.DataFrame(results[2.5])
-# results_2p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Output/revenue_results_2.5_medium_intensity_selection.csv')
+# results_2p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_2.5_medium_intensity_selection.csv')
 # results_3 = pd.DataFrame(results[3])
-# results_3.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Output/revenue_results_3.0_medium_intensity_selection.csv')
+# results_3.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_3.0_medium_intensity_selection.csv')
 
 
 

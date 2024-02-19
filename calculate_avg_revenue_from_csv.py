@@ -29,7 +29,7 @@ class Avg_Revenue:
 
         elif self.selection_mode == 'STU_Time_Intensity_Selection':
             for passenger_demand_mode in Avg_Revenue.passenger_demand_mode_set:
-                main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}'
+                main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{passenger_demand_mode}'
                 for intensity in Avg_Revenue.arrival_intensity_list:
                     sub_dir= f'Intensity_{intensity}'
                     avg_results = self.process_avg_results(main_dir, sub_dir)
@@ -176,7 +176,7 @@ get_avg_revenue.output_avg_results()
 # seed1 = 2005
 # passenger_demand_mode_set = ['constant', 'linear'] 
 # for passenger_demand_mode in passenger_demand_mode_set:
-#     main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Output\Passenger_{passenger_demand_mode}'
+#     main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{passenger_demand_mode}'
 #     for intensity in arrival_intensity_list:
 #         sub_dir= f'Intensity_{intensity}'
 #         result = Revenue_Result(main_dir, sub_dir, selection_mode = 'STU_Time_Intensity_Selection')
