@@ -55,8 +55,8 @@ class STU_Request:
             interval_scale = 1/(self.intensity_medium - 0.5) 
         elif self.STU_arrival_over_time == 'constant_medium':
             interval_scale = 1/(self.intensity_medium)
-        # elif self.STU_arrival_over_time == 'constant_high':
-        #     interval_scale = 1/(self.intensity_medium + 0.5) 
+        elif self.STU_arrival_over_time == 'constant_high':
+            interval_scale = 1/(self.intensity_medium + 0.5) 
         else:
             logging.warning('Invalid STU arrival mode.')
         logging.warning(f'Interval Scale: {interval_scale}')
@@ -68,7 +68,7 @@ class STU_Request:
             # Constant station probability as representative case
             # [Altona, Jungfernstieg, Berliner Tor, Barmbek, Ohlsdorf] 
             station_prob = [0.2, 0.2, 0.2, 0.2, 0.2]
-        elif self.STU_arrival_over_station == 'hermes_peak':
+        elif self.STU_arrival_over_station == 'hermes_peaks':
             # Cargo data from Hermes in Hamburg inner city: 
             # One Cargo Peak Sation: Barmbek, small Cargo Peak Altona
             # https://newsroom.hermesworld.com/wp-content/uploads/heatmaps2019/index.html#hamburg
@@ -79,7 +79,7 @@ class STU_Request:
             # [0.22348367029548988, 0.14914463452566096, 0.12779937791601867, 0.31912908242612753, 0.18044323483670296]
             # [Altona, Jungfernstieg, Berliner Tor, Barmbek, Ohlsdorf] 
         else:
-            logging.warning('Invalid STU arrival mode.')
+            raise ValueError('Invalid STU arrival mode.')
         return station_prob
     
 
@@ -206,9 +206,9 @@ class STU_Request:
         return revenues
 
 
-# stu_request_instance = STU_Request(STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', random_seed = 2023, simulation_time = 180, intensity_medium = 5)
+# stu_request_instance = STU_Request(STU_arrival_over_time = 'constant_high', STU_arrival_over_station = 'hermes_peaks', random_seed = 2023, simulation_time = 255, intensity_medium = 2.25)
 # STU_requests_df = stu_request_instance.generate_STU_requests_df()
 # revenues_distribution = stu_request_instance.plot_revenues_distribution(STU_requests_df)
 # # STU_requests_df[STU_requests_df['Revenue'] > 9]
 # np.mean(STU_requests_df['Revenue'])
-# min(STU_requests_df['Revenue'])
+# # min(STU_requests_df['Revenue'])

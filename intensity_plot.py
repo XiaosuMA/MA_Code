@@ -319,5 +319,5 @@ class Intensity_Plot:
         plt.show()
 
 
-check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'train_load')
+check_run = Intensity_Plot(passenger_demand_mode = 'linear', data_description = 'train_load')
 check_run.plot_all()
