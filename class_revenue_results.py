@@ -32,7 +32,7 @@ class Revenue_Result:
     def calculate_total_revenue_for_instance(self):
         results = []  # List to store all result DataFrames
 
-        if self.selection_mode == 'Policy_Selection':
+        if self.selection_mode:
             # Check if the directory contains any files
             if not any(os.scandir(self.directory)):
                 print('No file in this directory')
@@ -64,34 +64,34 @@ class Revenue_Result:
                             results.append(result)
                         
 
-        elif self.selection_mode == 'STU_Time_Intensity_Selection':
-            if not any(os.scandir(self.directory)):
-                print('No file in this directory')
-            else:
-                # Iterate over all files in the directory
-                for root, dirs, files in os.walk(self.directory):
-                    for file in files:
-                        if file.startswith('requests_'):  # scanning the file with the correct name
-                            # Extract stu intensity, policy, passenger demand mode, stu demand mode, random seed and simulation time from the file name
-                            STU_time_intensity = file.split('STU')[1].split('_Policy')[0]
-                            policy = file.split('_Policy_')[1].split('_Pa')[0]
-                            passenger_demand_mode = file.split('Pa')[1].split('_STU')[0]
+        # elif self.selection_mode == 'STU_Time_Intensity_Selection':
+        #     if not any(os.scandir(self.directory)):
+        #         print('No file in this directory')
+        #     else:
+        #         # Iterate over all files in the directory
+        #         for root, dirs, files in os.walk(self.directory):
+        #             for file in files:
+        #                 if file.startswith('requests_'):  # scanning the file with the correct name
+        #                     # Extract stu intensity, policy, passenger demand mode, stu demand mode, random seed and simulation time from the file name
+        #                     STU_time_intensity = file.split('STU')[1].split('_Policy')[0]
+        #                     policy = file.split('_Policy_')[1].split('_Pa')[0]
+        #                     passenger_demand_mode = file.split('Pa')[1].split('_STU')[0]
 
-                            parts = file.split('STU', 2)  # Split the string into at most 3 parts
-                            if len(parts) >= 3:  # If there are at least 3 parts, then there were at least 2 'STU's
-                                stu_demand_mode = parts[2].split('_Seed')[0]
-                            else:
-                                # Handle the case where there were less than 2 'STU's string
-                                # For example, set stu_demand_mode to None or to an empty string
-                                stu_demand_mode = None
+        #                     parts = file.split('STU', 2)  # Split the string into at most 3 parts
+        #                     if len(parts) >= 3:  # If there are at least 3 parts, then there were at least 2 'STU's
+        #                         stu_demand_mode = parts[2].split('_Seed')[0]
+        #                     else:
+        #                         # Handle the case where there were less than 2 'STU's string
+        #                         # For example, set stu_demand_mode to None or to an empty string
+        #                         stu_demand_mode = None
 
-                            random_seed = file.split('_Seed')[1].split('_Time')[0]
-                            simulation_time = file.split('_Time')[1].split('.csv')[0]
-                            file_path = os.path.join(root, file)
-                            logging.info(f'Final STU Request File Path:{file_path}')
-                            # Calculate total revenue for the file
-                            result = self.calculate_total_revenue(file_path, random_seed, simulation_time, STU_time_intensity, policy, passenger_demand_mode, stu_demand_mode)
-                            results.append(result)
+        #                     random_seed = file.split('_Seed')[1].split('_Time')[0]
+        #                     simulation_time = file.split('_Time')[1].split('.csv')[0]
+        #                     file_path = os.path.join(root, file)
+        #                     logging.info(f'Final STU Request File Path:{file_path}')
+        #                     # Calculate total revenue for the file
+        #                     result = self.calculate_total_revenue(file_path, random_seed, simulation_time, STU_time_intensity, policy, passenger_demand_mode, stu_demand_mode)
+        #                     results.append(result)
 
         # Concatenate all result DataFrames together
         final_result = pd.concat(results, ignore_index=True)

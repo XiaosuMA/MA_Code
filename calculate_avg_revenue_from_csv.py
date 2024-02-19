@@ -10,11 +10,14 @@ class Avg_Revenue:
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
+    STU_arrival_over_station_set = Transport_Simulator.STU_arrival_over_station_set
+    STU_arrival_over_time_set = Transport_Simulator.STU_arrival_over_time_set
     group = 20 # 20 Seeds
     start_seed = 2005
 
-    def __init__(self, selection_mode):
+    def __init__(self, selection_mode: str, sensitivity_pattern: str):
         self.selection_mode = selection_mode
+        self.sensitivity_pattern = sensitivity_pattern
 
     def output_avg_results(self):
         if self.selection_mode == 'Policy_Selection':
@@ -35,12 +38,39 @@ class Avg_Revenue:
                     avg_results = self.process_avg_results(main_dir, sub_dir)
 
                     avg_results.to_csv(rf'{main_dir}\avg_results_intensity{intensity}.csv', index = False)
+
+        elif self.selection_mode == 'Sensitivity_Analysis':
+            main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\{self.sensitivity_pattern}_Sensitivity'
+            if self.sensitivity_pattern == 'Passenger_Demand_Time_Intensity':
+                for passenger_demand_mode in Avg_Revenue.passenger_demand_mode_set:
+                    sub_dir= f'Passenger_{passenger_demand_mode}'
+                    avg_results = self.process_avg_results(main_dir, sub_dir)
+                    print(avg_results)
+                    avg_results.to_csv(rf'{main_dir}\avg_results_{sub_dir}.csv', index = False)
+            elif self.sensitivity_pattern == 'STU_Demand_Time_Intensity':
+                for arrival_over_time in Avg_Revenue.STU_arrival_over_time_set:
+                    sub_dir= f'Intensity_{arrival_over_time}'
+                    avg_results = self.process_avg_results(main_dir, sub_dir)
+                    print(avg_results)
+                    avg_results.to_csv(rf'{main_dir}\avg_results_{sub_dir}.csv', index = False)
+            elif self.sensitivity_pattern == 'STU_Demand_Station_Intensity':
+                for arrival_over_station in Avg_Revenue.STU_arrival_over_station_set:
+                    sub_dir= f'Station_{arrival_over_station}'
+                    avg_results = self.process_avg_results(main_dir, sub_dir)
+                    print(avg_results)
+                    avg_results.to_csv(rf'{main_dir}\avg_results_{sub_dir}.csv', index = False)
+            else:
+                raise ValueError('The sensitivity pattern is not valid')
+        else:
+            raise ValueError('The selection mode is not valid')
+
+
 ############################################################################################################################################################################ 
 
     def process_avg_results(self, main_dir, sub_dir):
         result = Revenue_Result(main_dir, sub_dir, selection_mode = self.selection_mode)
         final_results = result.calculate_total_revenue_for_instance()
-        print(final_results)
+        # print(final_results)
 
         results, avg_results = self.initialize_avg_results(final_results)
         avg_results['Seed_Time_Intensity, Policy'] = avg_results['Seed_Time_Intensity, Policy'].apply(self.replace_start_seed)
@@ -97,7 +127,7 @@ class Avg_Revenue:
 
 
 
-get_avg_revenue = Avg_Revenue(selection_mode = 'STU_Time_Intensity_Selection')
+get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity')
 get_avg_revenue.output_avg_results()
     
 ############################################################################################################################################################################

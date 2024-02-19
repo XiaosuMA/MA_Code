@@ -50,12 +50,16 @@ class Transport_Simulator:
     test_cargo_time_intensity_set  = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5]
     cargo_time_intensity_set = [2.0, 2.1, 2.2, 2.3, 2.4, 2.5]
     passenger_baseline_intensity_over_time_set = ['constant', 'linear']
+    STU_arrival_over_time_set = ['constant_low', 'constant_medium', 'constant_high']
+    STU_arrival_over_station_set = ['uniform', 'hermes_peaks']
+    sensitivity_pattern_set = ['Passenger_Demand_Time_Intensity', 'STU_Demand_Time_Intensity', 'STU_Demand_Station_Intensity']
 
 
     def __init__(self, passenger_baseline_intensity_over_time: str, 
                  STU_arrival_over_time: str, STU_arrival_over_station: str, 
                  decision_1_policy : str, decision_2_policy : str, 
-                 selection_mode: str, set_intensity_medium: float,
+                 selection_mode: str, sensitivity_pattern: str,
+                 set_intensity_medium: float,
                  random_seed: int,
                  operation_time: int):
         self.env = simpy.Environment()
@@ -64,6 +68,7 @@ class Transport_Simulator:
         self.decision_1_policy = decision_1_policy
         self.decision_2_policy = decision_2_policy
         self.selection_mode = selection_mode
+        self.sensitivity_pattern = sensitivity_pattern
         self.set_intensity_medium = set_intensity_medium
         self.random_seed = random_seed 
         # Set a random seed for reproducibility
@@ -102,7 +107,10 @@ class Transport_Simulator:
                                                random_seed = self.random_seed, simulation_time = self.simulation_time, 
                                                intensity_medium = self.avg_cargo_intensity)
         elif self.selection_mode == 'Sensitivity_Analysis':
-            pass    
+            stu_request_instance = STU_Request(STU_arrival_over_time = self.STU_arrival_over_time, 
+                                               STU_arrival_over_station = self.STU_arrival_over_station, 
+                                               random_seed = self.random_seed, simulation_time = self.simulation_time, 
+                                               intensity_medium = self.avg_cargo_intensity)   
         else:
             raise ValueError("Invalid selection_mode: Not defined selection_mode.")
 
@@ -256,7 +264,20 @@ class Transport_Simulator:
                 raise ValueError("Invalid STU_time_intensity")
             
         elif self.selection_mode == 'Sensitivity_Analysis':
-            pass
+            if self.sensitivity_pattern in Transport_Simulator.sensitivity_pattern_set:
+                if self.sensitivity_pattern == 'Passenger_Demand_Time_Intensity':
+                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
+                    sub_dir = f'Passenger_{self.passenger_baseline_intensity_over_time}'
+                elif self.sensitivity_pattern == 'STU_Demand_Time_Intensity':
+                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
+                    sub_dir = f'Intensity_{self.STU_arrival_over_time}'
+                elif self.sensitivity_pattern == 'STU_Demand_Station_Intensity':
+                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
+                    sub_dir = f'Station_{self.STU_arrival_over_station}'
+                else:
+                    pass
+            else:
+                raise ValueError("Invalid sensitivity_pattern")
         else:
             raise ValueError("Invalid selection_mode")
         return main_dir, sub_dir
@@ -289,7 +310,7 @@ class Transport_Simulator:
         elif self.selection_mode == 'STU_Time_Intensity_Selection':
             file_name = f'STU{STU_time_intensity}_Policy_{policy}_Pa{passenger_demand_mode}_STU{STU_demand_mode}_Seed{random_seed}_Time{simulation_time}'
         elif self.selection_mode == 'Sensitivity_Analysis':
-            pass
+            file_name = f'STU{STU_time_intensity}_Policy_{policy}_Pa{passenger_demand_mode}_STU{STU_demand_mode}_Seed{random_seed}_Time{simulation_time}'
         else:
             raise ValueError("Invalid selection_mode")
         
@@ -315,20 +336,30 @@ class Transport_Simulator:
 # test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
 #                                 STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 
 #                                decision_1_policy = 'Accept_All', decision_2_policy = 'FCFS', 
-#                                selection_mode='STU_Time_Intensity_Selection', set_intensity_medium = 4.0,
+#                                selection_mode='STU_Time_Intensity_Selection', sensitivity_pattern = None, 
+#                                set_intensity_medium = 4.0,
 #                                operation_time = 180, random_seed = 2023)
 
 
 # test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'linear', 
 #                                 STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 
 #                                decision_1_policy = 'Available_Train_2', decision_2_policy = 'FCFS', 
-#                                selection_mode='Policy_Selection', set_intensity_medium = 2.25,
+#                                selection_mode='Policy_Selection',  sensitivity_pattern = None, 
+#                                set_intensity_medium = None,
 #                                operation_time = 180, random_seed = 2023)
 
 # test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
 #                                 STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 
 #                                decision_1_policy = 'Available_Train_2', decision_2_policy = 'Random', 
-#                                selection_mode='Policy_Selection', set_intensity_medium = 2.25,
+#                                selection_mode='Policy_Selection',  sensitivity_pattern = None, 
+#                                set_intensity_medium = None,
+#                                operation_time = 180, random_seed = 2020)
+    
+# test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
+#                                 STU_arrival_over_time = 'constant_high', STU_arrival_over_station = 'uniform', 
+#                                decision_1_policy = 'Available_Train_2', decision_2_policy = 'FCFS', 
+#                                selection_mode='Sensitivity_Analysis',  sensitivity_pattern = 'STU_Demand_Time_Intensity', 
+#                                set_intensity_medium = None,
 #                                operation_time = 180, random_seed = 2020)
 
 # test_run.run_simulation()

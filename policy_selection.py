@@ -26,7 +26,8 @@ for passenger_demand_mode in passenger_demand_mode_set:
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 
                                             STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 
                                             decision_1_policy = decision_1, decision_2_policy = decision_2, 
-                                            selection_mode='Policy_Selection', set_intensity_medium = 2.25,
+                                            selection_mode='Policy_Selection', sensitivity_pattern = None,
+                                            set_intensity_medium = None,
                                             operation_time = 180, random_seed = seed) 
                                             # simulation time is for STU arrival, simulation time is 75 + 180 = 255
 
