@@ -21,7 +21,7 @@ passenger_demand_mode_set = ['constant', 'linear'] #
 for passenger_demand_mode in passenger_demand_mode_set:
     for decision_1 in ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']: 
         for decision_2 in ['Random', 'FCFS']:
-            for seed in range(1975, 2005): # + 30 seeds (1975, 2005)# 20 seeds, (2005, 2025)
+            for seed in range(1925, 1975): # +50 seeds (1925, 1975) # + 30 seeds (1975, 2005)# 20 seeds, (2005, 2025)
             
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 
                                             STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 

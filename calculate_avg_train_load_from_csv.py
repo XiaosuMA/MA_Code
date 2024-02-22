@@ -10,8 +10,8 @@ class Avg_Train_Load:
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
-    group = 50 # 50 Seeds
-    start_seed = 1975
+    group = 100 # 50 Seeds
+    start_seed = 1925
 
     def __init__(self, selection_mode):
         self.selection_mode = selection_mode
