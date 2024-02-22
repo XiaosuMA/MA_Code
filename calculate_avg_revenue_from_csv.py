@@ -12,8 +12,8 @@ class Avg_Revenue:
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
     STU_arrival_over_station_set = Transport_Simulator.STU_arrival_over_station_set
     STU_arrival_over_time_set = Transport_Simulator.STU_arrival_over_time_set
-    group = 20 # 20 Seeds
-    start_seed = 2005
+    group = 50 # 20 Seeds
+    start_seed = 1975 # first seed
 
     def __init__(self, selection_mode: str, sensitivity_pattern: str):
         self.selection_mode = selection_mode
@@ -127,7 +127,7 @@ class Avg_Revenue:
 
 
 
-get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity')
+get_avg_revenue = Avg_Revenue(selection_mode = 'Policy_Selection', sensitivity_pattern = None)
 get_avg_revenue.output_avg_results()
     
 ############################################################################################################################################################################

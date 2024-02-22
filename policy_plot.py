@@ -335,8 +335,8 @@ class Policy_Plot:
 ############################################################################################################
 
 
-# plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
+# plots = Policy_Plot(passenger_demand_mode='linear', data_description='request')
 # plots.plot_all()
 
-# plots = Policy_Plot(passenger_demand_mode='linear', data_description='train_load')
-# plots.plot_all()
+plots = Policy_Plot(passenger_demand_mode='linear', data_description='train_load')
+plots.plot_all()
