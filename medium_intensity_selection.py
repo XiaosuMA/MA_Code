@@ -22,7 +22,7 @@ for passenger_demand_mode in passenger_demand_mode_set:
         for arrival_intensity in arrival_intensity_list:
             load_status[arrival_intensity] = {}
             STU_status[arrival_intensity] = {}
-            for seed in range(2005, 2025): # 
+            for seed in range(1975, 2005): # + 30 seeds (1975, 2005) # 20 seeds (2005, 2025)
             
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 
                                             STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 

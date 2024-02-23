@@ -10,8 +10,8 @@ class Avg_Train_Load:
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
-    group = 100 # 50 Seeds
-    start_seed = 1925
+    group = 50 # 50 Seeds
+    start_seed = 1975
 
     def __init__(self, selection_mode):
         self.selection_mode = selection_mode
@@ -40,7 +40,7 @@ class Avg_Train_Load:
     def process_avg_results(self, main_dir, sub_dir):
         train_load = Train_Load_Results(main_dir, sub_dir, selection_mode = self.selection_mode)
         final_results = train_load.extract_train_load_data()
-        print(final_results)
+        # print(final_results)
 
         results, avg_results = self.initialize_avg_results(final_results)
         avg_results['Seed_Time_Intensity'] = avg_results['Seed_Time_Intensity'].apply(self.replace_start_seed)
@@ -90,6 +90,9 @@ class Avg_Train_Load:
         return avg_value
 
 
-instance_avg_train_load = Avg_Train_Load(selection_mode = 'Policy_Selection')
-instance_avg_train_load.output_avg_results()
+# instance_avg_train_load = Avg_Train_Load(selection_mode = 'Policy_Selection')
+# instance_avg_train_load.output_avg_results()
+    
+# instance_avg_train_load = Avg_Train_Load(selection_mode = 'STU_Time_Intensity_Selection')
+# instance_avg_train_load.output_avg_results()
     

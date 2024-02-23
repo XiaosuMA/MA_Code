@@ -11,7 +11,7 @@ class Intensity_Plot:
     passenger_demand_mode_set = ['constant', 'linear']
     data_description_set = ['train_load', 'request']
     cargo_arrival_intensity_set = Transport_Simulator.test_cargo_time_intensity_set 
-    total_seeds = 20
+    total_seeds = 50
 
     def __init__(self, passenger_demand_mode: str, data_description: str):
         self.passenger_demand_mode = passenger_demand_mode
@@ -319,5 +319,14 @@ class Intensity_Plot:
         plt.show()
 
 
-check_run = Intensity_Plot(passenger_demand_mode = 'linear', data_description = 'train_load')
-check_run.plot_all()
+# check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'request')
+# check_run.plot_all()
+
+# check_run = Intensity_Plot(passenger_demand_mode = 'linear', data_description = 'request')
+# check_run.plot_all()
+
+# check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'train_load')
+# check_run.plot_all()
+
+# check_run = Intensity_Plot(passenger_demand_mode = 'linear', data_description = 'train_load')
+# check_run.plot_all()
