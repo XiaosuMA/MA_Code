@@ -22,7 +22,7 @@ for passenger_demand_mode in passenger_demand_mode_set:
         for arrival_intensity in arrival_intensity_list:
             load_status[arrival_intensity] = {}
             STU_status[arrival_intensity] = {}
-            for seed in range(1975, 2005): # + 30 seeds (1975, 2005) # 20 seeds (2005, 2025)
+            for seed in range(1925, 1975): # + 50 seeds (1925, 1975)# + 30 seeds (1975, 2005) # 20 seeds (2005, 2025)
             
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 
                                             STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 
@@ -40,25 +40,6 @@ for passenger_demand_mode in passenger_demand_mode_set:
             # revenue_result = test_run.get_revenue_data()
             # results[arrival_intensity] = revenue_result
 
-# print(results[0.5])
-# print(results[1])
-# print(results[1.5])
-# print(results[2])
-# print(results[2.5])
-# print(results[3])
-
-# results_p5 = pd.DataFrame(results[0.5])
-# results_p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_0.5_medium_intensity_selection.csv')
-# results_1 = pd.DataFrame(results[1])
-# results_1.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_1.0_medium_intensity_selection.csv')
-# results_1p5 = pd.DataFrame(results[1.5])
-# results_1p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_1.5_medium_intensity_selection.csv')
-# results_2 = pd.DataFrame(results[2])
-# results_2.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_2.0_medium_intensity_selection.csv')
-# results_2p5 = pd.DataFrame(results[2.5])
-# results_2p5.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_2.5_medium_intensity_selection.csv')
-# results_3 = pd.DataFrame(results[3])
-# results_3.to_csv('D:/Nextcloud/Data/MA/Code/PyCode_MA/Outputs/STU_Time_Intensity_Selection_Outputs/revenue_results_3.0_medium_intensity_selection.csv')
 
 
 
