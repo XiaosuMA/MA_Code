@@ -20,11 +20,11 @@ results = {}
 excution_time = pd.DataFrame(columns = ['Passenger_Demand_Mode', 'Intensity', 'Decision_1', 'Seed', 'Execution_Time'])
 passenger_demand_mode_set = ['constant', 'linear'] #  
 for passenger_demand_mode in passenger_demand_mode_set:
-    for decision_1 in ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']: 
+    for decision_1 in ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3','Available_Train_4', 'Available_Train_5']: # 
         for arrival_intensity in arrival_intensity_list:
             # load_status[arrival_intensity] = {}
             # STU_status[arrival_intensity] = {}
-            for seed in range(1925, 1926): # + 50 seeds (1925, 1975)# + 30 seeds (1975, 2005) # 20 seeds (2005, 2025)
+            for seed in range(1925, 2025): # + 50 seeds (1925, 1975)# + 30 seeds (1975, 2005) # 20 seeds (2005, 2025)
                 # record current timestamp
                 loop_start = datetime.now()
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 

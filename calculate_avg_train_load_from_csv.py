@@ -6,7 +6,7 @@ from class_train_load_results import Train_Load_Results
 
 
 class Avg_Train_Load:
-    decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
+    decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3', 'Available_Train_4', 'Available_Train_5']
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set

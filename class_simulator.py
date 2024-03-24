@@ -52,7 +52,7 @@ class Transport_Simulator:
     passenger_baseline_intensity_over_time_set = ['constant', 'linear']
     STU_arrival_over_time_set = ['constant_low', 'constant_medium', 'constant_high']
     STU_arrival_over_station_set = ['uniform', 'hermes_peaks']
-    sensitivity_pattern_set = ['Passenger_Demand_Time_Intensity', 'STU_Demand_Time_Intensity', 'STU_Demand_Station_Intensity']
+    sensitivity_pattern_set = ['Passenger_Demand_Time_Intensity', 'STU_Demand_Station_Intensity', 'STU_Demand_Time_Intensity']
 
 
     def __init__(self, passenger_baseline_intensity_over_time: str, 

@@ -6,7 +6,7 @@ from class_revenue_results import Revenue_Result
 
 
 class Avg_Revenue:
-    decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
+    decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3', 'Available_Train_4', 'Available_Train_5']
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
@@ -131,6 +131,9 @@ class Avg_Revenue:
 # get_avg_revenue.output_avg_results()
 
 # get_avg_revenue = Avg_Revenue(selection_mode = 'STU_Time_Intensity_Selection', sensitivity_pattern = None)
+# get_avg_revenue.output_avg_results()
+    
+# get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity')
 # get_avg_revenue.output_avg_results()
     
 ############################################################################################################################################################################

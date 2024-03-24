@@ -20,15 +20,15 @@ from class_simulator import Transport_Simulator
 results = {}
 excution_time = pd.DataFrame(columns = ['Sensitivity_Pattern', 'Arrival_Over_Station', 'Decision_1', 'Decision_2', 'Seed', 'Execution_Time'])
 sensitivity_pattern_set = Transport_Simulator.sensitivity_pattern_set
-#['Passenger_Demand_Time_Intensity', 'STU_Demand_Time_Intensity', 'STU_Demand_Station_Intensity'] 
+#['Passenger_Demand_Time_Intensity', 'STU_Demand_Station_Intensity', 'STU_Demand_Time_Intensity'] 
 STU_arrival_over_station_set = Transport_Simulator.STU_arrival_over_station_set
 # ['uniform', 'hermes_peaks']
 
-for sensitivity in [sensitivity_pattern_set[2]]:
+for sensitivity in [sensitivity_pattern_set[1]]:
     for arrival_over_station in [STU_arrival_over_station_set[1]]:
         for decision_1 in ['Available_Train_2']: 
             for decision_2 in ['FCFS']:
-                for seed in range(2005, 2007): # 20 seeds
+                for seed in range(1925, 2025): 
                     # record current timestamp
                     loop_start = datetime.now()
                 
@@ -51,7 +51,7 @@ for sensitivity in [sensitivity_pattern_set[2]]:
                                             'Decision_1': [decision_1], 'Decision_2': [decision_2], 'Seed': [seed], 'Execution_Time': [td]})
                     excution_time = pd.concat([excution_time, new_row], ignore_index=True)
 
-dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\{sensitivity_pattern_set[2]}_Sensitivity'
+dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\{sensitivity_pattern_set[1]}_Sensitivity'
 filename = f'execution_time_Station_{STU_arrival_over_station_set[1]}.csv'
 full_path = os.path.join(dir, filename)
 

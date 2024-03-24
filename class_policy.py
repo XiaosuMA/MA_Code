@@ -27,6 +27,10 @@ class Policy:
             logging.critical(f'Policy 1: Accept, if there exist at least three {self.decision_1_policy} for on time delivery.')
         elif self.decision_1_policy == 'Accept_All':
             logging.critical(f'Policy 1: Accept all STU requests.')
+        elif self.decision_1_policy == 'Available_Train_4':
+            logging.critical(f'Policy 1: Accept, if there exist at least four {self.decision_1_policy} for on time delivery.')
+        elif self.decision_1_policy == 'Available_Train_5':
+            logging.critical(f'Policy 1: Accept, if there exist at least five {self.decision_1_policy} for on time delivery.')
         else:
             print(f'Invalid decision_1_policy')
         
@@ -47,6 +51,10 @@ class Policy:
             return self.check_available_train_2_or_revenue(get_trains, revenue)
         elif self.decision_1_policy == 'Available_Train_3':
             return self.check_available_train_3(get_trains)
+        elif self.decision_1_policy == 'Available_Train_4':
+            return self.check_available_train_4(get_trains)
+        elif self.decision_1_policy == 'Available_Train_5':
+            return self.check_available_train_5(get_trains)
         elif self.decision_1_policy == 'Accept_All':
             return self.accept_all()
         else:
@@ -91,6 +99,18 @@ class Policy:
     
     def accept_all(self):
         decision_1 = 1
+        return decision_1
+    def check_available_train_4(self, get_trains):
+        if len(get_trains) >= 4:
+            decision_1 = 1
+        else:
+            decision_1 = 0
+        return decision_1
+    def check_available_train_5(self, get_trains):
+        if len(get_trains) >= 5:
+            decision_1 = 1
+        else:
+            decision_1 = 0
         return decision_1
     
     def assign_FCFS(self, get_trains):
