@@ -29,6 +29,9 @@ class Policy_Plot:
                 self.plot_delay_0_delivery_percentage(avg_results, d_2)
                 self.plot_delivery_percentage(avg_results, d_2)
                 self.plot_delay_true_waiting_percentage(avg_results, d_2)
+                self.plot_none_delay_percentage(avg_results, d_2)
+                self.plot_delay_nan_waiting_percentage(avg_results, d_2)
+                self.plot_failed_loading(avg_results, d_2)
         elif self.data_description == 'train_load':
             for d_2 in Policy_Plot.decision_2_policy_list:
                 avg_results = self.concat_avg_results(d_2)
@@ -132,27 +135,28 @@ class Policy_Plot:
     # Plot distribution of Delay_0_delivery (% Accepted), Delay_0_15_delivery, Delay_15_30_delivery, Delay_gt_30_delivery, Delay_0_waiting, Delay_nan_waiting(late_arrival), Delay_true_waiting
     def plot_delay_distribution(self, avg_results: pd.DataFrame):
         # Create subplots outside of the loop
+    # Create subplots outside of the loop
         fig, axs = plt.subplots(len(avg_results)//2, 2, figsize=(10, 10), sharey=True)
         # Add main title
         fig.suptitle('Delay_Distribution_of_Policy', fontsize=12)
         # Define colors for even and odd subplots
-        even_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+        even_color = (244/255, 229/255, 170/255)  # Normalize RGB values (148/255, 189/255, 202/255)
         odd_color = (196/255, 203/255, 229/255)  # Normalize RGB values
         for row in range(len(avg_results)):
             policy = avg_results.loc[row,'Policy_abbr']
 
-            delay_0_delivery = float(avg_results.loc[row,'Delay_0_delivery (% Accepted)'].split(',')[1].strip())
+            delay_0_delivery = float(avg_results.loc[row,'Delay_0_delivery (of delivery)'].split(',')[1].strip())
             delay_0_15_delivery = float(avg_results.loc[row,'Delay_0_15_delivery'].split(',')[1].strip())
             delay_15_30_delivery = float(avg_results.loc[row,'Delay_15_30_delivery'].split(',')[1].strip())
             delay_gt_30_delivery = float(avg_results.loc[row,'Delay_gt_30_delivery'].split(',')[1].strip())
-            delay_0_waiting = float(avg_results.loc[row,'Delay_0_waiting'].split(',')[1].strip())
-            delay_nan_waiting = float(avg_results.loc[row,'Delay_nan_waiting(late_arrival)'].split(',')[1].strip())
+            none_delay_accepted = float(avg_results.loc[row,'None_Delay (of accepted)'].split(',')[1].strip())
+            delay_0_waiting = float(avg_results.loc[row,'Delay_0_waiting (of accepted)'].split(',')[1].strip())
+            delay_nan_waiting = float(avg_results.loc[row,'Delay_nan_waiting'].split(',')[1].strip())
             delay_true_waiting = float(avg_results.loc[row,'Delay_true_waiting'].split(',')[1].strip())
-            data = [delay_0_delivery, delay_0_15_delivery, delay_15_30_delivery, delay_gt_30_delivery, delay_0_waiting, delay_nan_waiting, delay_true_waiting]
-            x_ticks = ['Delay_0_delivery', 'Delay_0_15_delivery', 'Delay_15_30_delivery', 'Delay_gt_30_delivery', 'Delay_0_waiting', 'Delay_nan_waiting', 'Delay_true_waiting']
+            data = [delay_0_delivery, delay_0_15_delivery, delay_15_30_delivery, delay_gt_30_delivery, none_delay_accepted, delay_0_waiting, delay_nan_waiting, delay_true_waiting]
+            x_ticks = ['Delay_0_d', 'Delay_0_15_d', 'Delay_15_30_d', 'Delay_gt_30_d', 'None_Delay_A', 'Delay_0_w', 'Delay_nan_w', 'Delay_true_w']
 
             # Plot data on the subplot
-            # Use the index of the loop to select a color
             mycolor = even_color if row % 2 == 0 else odd_color
             ax = axs[row//2, row%2]
             ax.bar(x_ticks, data, label=policy, alpha= 1, color=mycolor)
@@ -183,24 +187,24 @@ class Policy_Plot:
             x_ticks.append(tick)
             revenues.append(revenue_total)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks, revenues, label='policies', alpha=1, color=d2_color)
-        max_revenue = max(revenues)
-        plt.axhline(y=max_revenue, color='black', linestyle='--')
-        plt.annotate('Max: {:.2f}'.format(max_revenue), xy=(1, max_revenue), xytext=(8, 0), 
-                    xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.xticks(rotation=0)
-        plt.xlabel('Policy')
-        plt.ylabel('Revenue_Total')
-        plt.legend()
-        plt.title('Revenue_Total for each policy')
+        plt.bar(x_ticks, revenues, label='Revenue Total', alpha=1, color=d2_color)
+        for i, v in enumerate(revenues):
+            plt.text(i, v + 25, "{:.2f}".format(v), ha='center', va='bottom')
+            max_revenue = max(revenues)
+        plt.axhline(y=max_revenue, color='black', alpha = 0.3, linestyle='--')
+        # plt.annotate('Max: {:.2f}'.format(max_revenue), xy=(1, max_revenue), xytext=(8, 0), 
+        #             xycoords=('axes fraction', 'data'), textcoords='offset points')
+        plt.xticks(rotation=0, fontsize=14)
+        plt.legend(fontsize=12 ,loc='upper right')
         # Set the limits of y-axis
         if self.passenger_demand_mode == 'constant':
             plt.ylim([1600, max(revenues) + 100])
         elif self.passenger_demand_mode == 'linear':
             plt.ylim([1600, max(revenues) + 100])
+        plt.yticks([])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Revenue_Total_vs_Policy.png')
         plt.show()
@@ -210,33 +214,29 @@ class Policy_Plot:
         imaginary_revenues = []
         for row in range(len(avg_results)):
             policy = avg_results.loc[row,'Policy_abbr']
-            imaginary_revenue = float(avg_results.loc[row,'Imaginary_Revenue, PRT to %'].split(',')[1].strip())
+            imaginary_revenue = float(avg_results.loc[row,'Imaginary_Revenue, PFA Ratio'].split(',')[1].strip())
             x_ticks.append(policy)
             imaginary_revenues.append(imaginary_revenue)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        bars = plt.bar(x_ticks, imaginary_revenues, label='policies', alpha=1, color=d2_color)
+        bars = plt.bar(x_ticks, imaginary_revenues, label='Imaginary Revenue Ratios', alpha=1, color=d2_color)
         for bar in bars:
             yval = bar.get_height()
-            plt.text(bar.get_x() + bar.get_width()/2.0, yval, round(yval, 2), ha='center', va='bottom') # va: vertical alignment
-        max_revenue = max(imaginary_revenues)
-        plt.axhline(y=max_revenue, color='black', linestyle='--')
+            plt.text(bar.get_x() + bar.get_width()/2.0, yval + 0.01, "{:.2f}%".format(yval*100), ha='center', va='bottom', fontsize = 12)
+        # max_revenue = max(imaginary_revenues)
+        # plt.axhline(y=max_revenue, color='black', alpha = 0.3, linestyle='--')
         # plt.annotate('Max: {:.2f}'.format(max_revenue), xy=(1, max_revenue), xytext=(8, 0), 
         #             xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.axhline(y=1.0, color='red', linestyle='--')
-        # plt.annotate('1.0: get all imaginary revenue', xy=(1, 1.0), xytext=(8, 0),
-        #             xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.title('Imaginary_Revenue, PRT to % for each policy')
-        plt.xlabel('Policy')
-        plt.ylabel('Imaginary_Revenue, PRT to %')
-        plt.legend()
-        plt.xticks(rotation=0)
+        plt.axhline(y=1.0, color='red', alpha = 0.3, linestyle='--')
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
         if self.passenger_demand_mode == 'constant':
-            plt.ylim([0.0, 1.05])
+            plt.ylim([0.4, 1.0])
         elif self.passenger_demand_mode == 'linear':
-            plt.ylim([0.0, 1.05])
+            plt.ylim([0.4, 1.0])
+        plt.yticks([])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Imaginary_Revenue_vs_Policy.png')
         plt.show()
@@ -247,30 +247,27 @@ class Policy_Plot:
         y = []
         for row in range(len(avg_results)):
             policy = avg_results.loc[row,'Policy_abbr']
-            avg_reject_all_revenue_percentage_make = float(avg_results.loc[row,'Reject_All_Revenue, PRT to %'].split(',')[1].strip())
+            avg_reject_all_revenue_percentage_make = float(avg_results.loc[row,'Reject_All_Revenue, PFA Ratio'].split(',')[1].strip())
             x_ticks.append(policy)
             y.append(avg_reject_all_revenue_percentage_make)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        bars = plt.bar(x_ticks,y, label= 'PRT to %',  alpha=1, color=d2_color)
+        bars = plt.bar(x_ticks,y, label= 'All Rejection Ratios',  alpha=1, color=d2_color)
         for bar in bars:
             yval = bar.get_height()
-            plt.text(bar.get_x() + bar.get_width()/2.0, yval + 0.01, "+" + str(round(yval - 1 , 2)*100) + "%", ha='center', va='bottom') 
-
-        plt.title('Reject_All_Revenue vs Policy Revenue, PRT to %')
-        plt.axhline(y=1.0, color='black', linestyle='--')  # Add horizontal dashed line at y=1.0
-        # plt.annotate('Reject All Revenue Line', xy=(1, 1.0), xytext=(8, 0), 
-        #             xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Reject_All_Revenue, PRT to %')  # Label for y-axis   
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
+            diff = yval - 1
+            sign = '+' if diff >= 0 else '-'
+            plt.text(bar.get_x() + bar.get_width()/2.0, yval + 0.01, sign + "{:.2f}%".format(abs(diff)*100), ha='center', va='bottom', fontsize=12) 
+        plt.axhline(y=1.0, color='black', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=1.0 
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
         if self.passenger_demand_mode == 'constant':
             plt.ylim(bottom=0.8)
         elif self.passenger_demand_mode == 'linear':
             plt.ylim(bottom=0.8)
+        plt.yticks([])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Reject_All_Revenue_vs_Policy.png')
         plt.show()
@@ -282,23 +279,24 @@ class Policy_Plot:
         y = []
         for row in range(len(avg_results)):
             policy = avg_results.loc[row,'Policy_abbr']
-            delay_0_delivery = float(avg_results.loc[row,'Delay_0_delivery (% Accepted)'].split(',')[1].strip())
+            delay_0_delivery = float(avg_results.loc[row,'Delay_0_delivery (of delivery)'].split(',')[1].strip())
             x_ticks.append(policy)
             y.append(delay_0_delivery)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks,y, label='Delay_0_delivery (% Accepted)', alpha=1, color=d2_color)
-        plt.title('Policy vs Delay_0_delivery (% Accepted)')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Delay_0_delivery (% Accepted)')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
+        plt.bar(x_ticks, y, label='On Time Ratio of Delivery', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize=12)
+
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
         if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.4)
+            plt.ylim(bottom=0.8)
         elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.4)
+            plt.ylim(bottom=0.8)
+        plt.yticks([])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Delay_0_delivery_vs_Policy.png')
         plt.show()
@@ -309,26 +307,27 @@ class Policy_Plot:
         y = []
         for row in range(len(avg_results)):
             policy = avg_results.loc[row,'Policy_abbr']
-            delivery_percentage = float(avg_results.loc[row,'Delivered (% Total)'].split(',')[1].strip()) + float(avg_results.loc[row,'On_Train'].split(',')[1].strip())
+            delivery_percentage = float(avg_results.loc[row,'Delivered (of total)'].split(',')[1].strip()) + float(avg_results.loc[row,'On_Train'].split(',')[1].strip())
             x_ticks.append(policy)
             y.append(delivery_percentage)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks,y, label='Delivery (% Total)', alpha=1, color=d2_color)
-        plt.title('Policy vs Delivery (% Total)')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Delivery (% Total)')  # Label for y-axis
-        plt.axhline(y=0.6, color='black', linestyle='--')  # Add horizontal dashed line at y=0.6, 60% of total STU
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
+        plt.bar(x_ticks,y, label='Delivery Ratio of Total', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom', fontsize=12)
+
+        plt.axhline(y=0.6, color='black', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=0.6, 60% of total STU
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
         if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.3)
+            plt.ylim(bottom=0.0, top=1.0)
         elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.3)
+            plt.ylim(bottom=0.0, top=1.0)
+        plt.yticks([])
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Delivery_(% Total)_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Delivery_Ratio_vs_Policy.png')
         plt.show()
 
     # Plot Delay_true_waiting, % to Accepted, How many worst case
@@ -341,18 +340,92 @@ class Policy_Plot:
             x_ticks.append(policy)
             y.append(delay_true_waiting)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks,y, label='Delay_true_waiting, % to Accepted', alpha=1, color=d2_color)
-        plt.title('Policy vs Delay_true_waiting, % to Accepted')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Delay_true_waiting, % to Accepted')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
+        plt.bar(x_ticks,y, label='Worst Cases to Accepted', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.001, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize=12)
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
+        if self.passenger_demand_mode == 'constant':
+                plt.ylim(bottom=0.0, top=0.10)
+        elif self.passenger_demand_mode == 'linear':
+            plt.ylim(bottom=0.0, top=0.15)
+        plt.yticks([])
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Delay_true_waiting_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Delay_true_waiting_accepted_vs_Policy.png')
         plt.show()
+
+    def plot_none_delay_percentage(self, avg_results: pd.DataFrame, d_2: str):
+        x_ticks = []
+        y = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            none_delay = float(avg_results.loc[row,'None_Delay (of accepted)'].split(',')[1].strip())
+            x_ticks.append(policy)
+            y.append(none_delay)
+        if d_2 == 'Random':
+            d2_color = (244/255, 229/255, 170/255)
+        elif d_2 == 'FCFS':
+            d2_color = (196/255, 203/255, 229/255)
+        plt.bar(x_ticks,y, label='Without Delay to Accepted', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize=12)
+        plt.legend(fontsize=12 ,loc='upper left')
+        plt.xticks(rotation=0, fontsize=14)
+        plt.ylim(bottom=0.6)
+        plt.yticks([])
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_None_Delay_accepted_vs_Policy.png')
+        plt.show()
+
+    def plot_delay_nan_waiting_percentage(self, avg_results: pd.DataFrame, d_2: str):
+        x_ticks = []
+        y = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            delay_nan_waiting = float(avg_results.loc[row,'Delay_nan_waiting'].split(',')[1].strip())
+            x_ticks.append(policy)
+            y.append(delay_nan_waiting)
+        if d_2 == 'Random':
+            d2_color = (244/255, 229/255, 170/255)
+        elif d_2 == 'FCFS':
+            d2_color = (196/255, 203/255, 229/255)
+        plt.bar(x_ticks,y, label='Delay Nan Waiting to Accepted', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.005, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize=12)
+        plt.legend(fontsize=12 ,loc='upper left')
+        plt.xticks(rotation=0, fontsize=14)
+        plt.ylim(bottom=0.0, top=0.20)
+        plt.yticks([])
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Delay_nan_waiting_accepted_vs_Policy.png')
+        plt.show()
+
+    def plot_failed_loading(self, avg_results: pd.DataFrame, d_2: str):
+        x_ticks = []
+        y = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            failed_loading = float(avg_results.loc[row,'Avg_Failed_Loading'].split(',')[1].strip())
+            x_ticks.append(policy)
+            y.append(failed_loading)
+        if d_2 == 'Random':
+            d2_color = (244/255, 229/255, 170/255)
+        elif d_2 == 'FCFS':
+            d2_color = (196/255, 203/255, 229/255)
+        plt.bar(x_ticks,y, label='Average Number of Failed Loading', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom', fontsize=12)
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
+        plt.ylim(bottom=0.0, top=2.0)
+        plt.yticks([]) 
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Failed_Loading_vs_Policy.png')
+        plt.show()
+    
 
 ############################################################################################################
 # plot Total_Passenger_Extra for all Policy_abbr
@@ -365,15 +438,18 @@ class Policy_Plot:
             x_ticks.append(policy)
             y.append(total_passenger_extra)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks,y, label='Total_Passenger_Extra', alpha=1, color=d2_color)
-        plt.title('Policy vs Total_Passenger_Extra')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Total_Passenger_Extra')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
+        plt.bar(x_ticks,y, label='Total Extra Passenger', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom', fontsize=14)
+        # plt.title('Policy vs Total_Passenger_Extra')
+        # plt.xlabel('Policy')  # Label for x-axis
+        # plt.ylabel('Avg_Total_Passenger_Extra')  # Label for y-axis
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)  # Rotate x-axis labels
+        plt.yticks([]) 
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Total_Passenger_Extra_vs_Policy.png')
         plt.show()       
@@ -388,16 +464,19 @@ class Policy_Plot:
             x_ticks.append(policy)
             y.append(avg_train_load_percentage)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks,y, label='Average_Train_Load_Percentage', alpha=1, color=d2_color)
-        plt.title('Policy vs Average_Train_Load_Percentage')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Average_Train_Load_Percentage')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
-        plt.ylim(bottom=0.675)
+        plt.bar(x_ticks,y, label='Average Train Load', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.005, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize=14)
+        # plt.title('Policy vs Average_Train_Load_Percentage')
+        # plt.xlabel('Policy')  # Label for x-axis
+        # plt.ylabel('Avg_Average_Train_Load_Percentage')  # Label for y-axis
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)  # Rotate x-axis labels
+        plt.ylim(bottom=0.5)
+        plt.yticks([]) 
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Average_Train_Load_Percentage_vs_Policy.png')
         plt.show()
@@ -412,16 +491,19 @@ class Policy_Plot:
             x_ticks.append(policy)
             y.append(avg_stu_onboard)
         if d_2 == 'Random':
-            d2_color = (148/255, 189/255, 202/255)  # Normalize RGB values
+            d2_color = (244/255, 229/255, 170/255)  # Normalize RGB values
         elif d_2 == 'FCFS':
             d2_color = (196/255, 203/255, 229/255)  # Normalize RGB values
-        plt.bar(x_ticks,y, label='Average_STU_Onboard', alpha=1, color=d2_color)
-        plt.title('Policy vs Average_STU_Onboard')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Average_STU_Onboard')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=0)  # Rotate x-axis labels
-        plt.ylim(bottom=2.5)
+        plt.bar(x_ticks,y, label='Average Freight Onboard', alpha=1, color=d2_color)
+        for i, v in enumerate(y):
+            plt.text(i, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom', fontsize=14)
+        # plt.title('Policy vs Average_STU_Onboard')
+        # plt.xlabel('Policy')  # Label for x-axis
+        # plt.ylabel('Avg_Average_STU_Onboard')  # Label for y-axis
+        plt.legend(fontsize=12 ,loc='upper right')
+        plt.xticks(rotation=0, fontsize=14)
+        plt.yticks([]) 
+        plt.ylim(bottom=0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Average_STU_Onboard_vs_Policy.png')
         plt.show()

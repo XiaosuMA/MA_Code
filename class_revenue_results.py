@@ -133,9 +133,15 @@ class Revenue_Result:
         status_2 = cond_status_2.sum()
         status_1 = cond_status_1.sum()
         status_0 = cond_status_0.sum()
+
+        avg_failed_loading = np.round(np.mean(STU_requests_df['Failed_Loading'].dropna().to_list()), 6)
+
         STU_Total = status_0 + status_1 + status_2 + status_3
         STU_Accepted = status_1 + status_2 + status_3
+        STU_Delivery = status_2 + status_3
+        STU_None_Delay = delay_0_delivery + delay_0_waiting + delay_nan_waiting
         
+
         revenue_1 = Revenue_Result.revenue_of_rejection_or_uncompletion * (status_0 + delay_0_waiting + delay_nan_waiting)
         revenue_2 = STU_requests_df.loc[cond_status_2 & cond_delay_0, 'Revenue'].sum()
         revenue_3 = STU_requests_df.loc[cond_status_3 & cond_delay_0, 'Revenue'].sum()
@@ -153,28 +159,30 @@ class Revenue_Result:
             'Seed_Time_Intensity, Policy': [[random_seed + '_' + simulation_time + '_' + STU_time_intensity, Policy]],
             'Passenger_Demand_Mode, STU_Demand_Mode': [[Passenger_Demand_Mode, STU_Demand_Mode]],
             'STU_Total, Revenue_Total': [[STU_Total, total_revenue]],
-            'Imaginary_Revenue, PRT to %': [[imaginary_revenue, np.round(total_revenue / imaginary_revenue, 3)]],
-            'Reject_All_Revenue, PRT to %': [[STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion, 
+            'Imaginary_Revenue, PFA Ratio': [[imaginary_revenue, np.round(total_revenue / imaginary_revenue, 3)]],
+            'Reject_All_Revenue, PFA Ratio': [[STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion, 
                                               np.round(total_revenue / (STU_Total * Revenue_Result.revenue_of_rejection_or_uncompletion), 3)]],
-            'Delay_0_delivery (% Accepted)': [[delay_0_delivery, np.round(delay_0_delivery / STU_Accepted, 3)]],
-            'Delay_0_15_delivery': [[delay_0_15_delivery, np.round(delay_0_15_delivery / STU_Accepted, 3)]],
-            'Delay_15_30_delivery': [[delay_15_30_delivery, np.round(delay_15_30_delivery / STU_Accepted, 3)]],
-            'Delay_gt_30_delivery': [[delay_gt_30_delivery, np.round(delay_gt_30_delivery / STU_Accepted, 3)]],
-            'Delay_0_waiting': [[delay_0_waiting, np.round(delay_0_waiting / STU_Accepted, 3)]],
-            'Delay_nan_waiting(late_arrival)': [[delay_nan_waiting, np.round(delay_nan_waiting / STU_Accepted, 3)]],
+            'Delay_0_delivery (of delivery)': [[delay_0_delivery, np.round(delay_0_delivery / STU_Delivery, 3)]],
+            'Delay_0_15_delivery': [[delay_0_15_delivery, np.round(delay_0_15_delivery / STU_Delivery, 3)]],
+            'Delay_15_30_delivery': [[delay_15_30_delivery, np.round(delay_15_30_delivery / STU_Delivery, 3)]],
+            'Delay_gt_30_delivery': [[delay_gt_30_delivery, np.round(delay_gt_30_delivery / STU_Delivery, 3)]],
+            'None_Delay (of accepted)': [[STU_None_Delay, np.round(STU_None_Delay / STU_Accepted, 3)]],
+            'Delay_0_waiting (of accepted)': [[delay_0_waiting, np.round(delay_0_waiting / STU_Accepted, 3)]],
+            'Delay_nan_waiting': [[delay_nan_waiting, np.round(delay_nan_waiting / STU_Accepted, 3)]],
             'Delay_true_waiting': [[delay_true_waiting, np.round(delay_true_waiting / STU_Accepted, 3)]],
             'Delay_0_15_waiting': [[delay_0_15_waiting, np.round(delay_0_15_waiting / STU_Accepted, 3)]],
             'Delay_15_30_waiting': [[delay_15_30_waiting, np.round(delay_15_30_waiting / STU_Accepted, 3)]],
             'Delay_gt_30_waiting': [[delay_gt_30_waiting, np.round(delay_gt_30_waiting / STU_Accepted, 3)]],
-            'Delivered (% Total)': [[status_3, np.round(status_3 / STU_Total, 3)]],
+            'Delivered (of total)': [[status_3, np.round(status_3 / STU_Total, 3)]],
             'On_Train': [[status_2, np.round(status_2 / STU_Total, 3)]],
             'Waiting': [[status_1, np.round(status_1 / STU_Total, 3)]],
-            'Rejected': [[status_0, np.round(status_0 / STU_Total, 3)]]
+            'Rejected': [[status_0, np.round(status_0 / STU_Total, 3)]],
+            'Avg_Failed_Loading': [[-100, avg_failed_loading]]
         }
         result = pd.DataFrame(result, index=[0])
         return result
         
-## STU_Time_Intensity_Selection:
+# # STU_Time_Intensity_Selection:
 # intensity = 1.0
 # main_dir= r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_constant'
 # sub_dir= f'Intensity_{intensity}'
