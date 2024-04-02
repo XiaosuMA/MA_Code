@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+from scipy.interpolate import make_interp_spline, BSpline
+from scipy.signal import savgol_filter
 
 class Policy_Plot:
 
@@ -19,19 +20,20 @@ class Policy_Plot:
 
     def plot_all(self):
         if self.data_description == 'request':
-            avg_results_for_delay_distribution = self.concat_avg_for_delay_distribution()
-            self.plot_delay_distribution(avg_results_for_delay_distribution)
+            # avg_results_for_delay_distribution = self.concat_avg_for_delay_distribution()
+            # self.plot_delay_distribution(avg_results_for_delay_distribution)
             for d_2 in Policy_Plot.decision_2_policy_list:
                 avg_results = self.concat_avg_results(d_2)
-                self.plot_revenue_total(avg_results, d_2)
-                self.plot_imaginary_revenue_percentage(avg_results, d_2)
-                self.plot_reject_all_revenue_percentage(avg_results, d_2)
-                self.plot_delay_0_delivery_percentage(avg_results, d_2)
-                self.plot_delivery_percentage(avg_results, d_2)
-                self.plot_delay_true_waiting_percentage(avg_results, d_2)
-                self.plot_none_delay_percentage(avg_results, d_2)
-                self.plot_delay_nan_waiting_percentage(avg_results, d_2)
-                self.plot_failed_loading(avg_results, d_2)
+                # self.plot_revenue_total(avg_results, d_2)
+                # self.plot_imaginary_revenue_percentage(avg_results, d_2)
+                # self.plot_reject_all_revenue_percentage(avg_results, d_2)
+                # self.plot_delay_0_delivery_percentage(avg_results, d_2)
+                # self.plot_delivery_percentage(avg_results, d_2)
+                # self.plot_delay_true_waiting_percentage(avg_results, d_2)
+                # self.plot_none_delay_percentage(avg_results, d_2)
+                # self.plot_delay_nan_waiting_percentage(avg_results, d_2)
+                # self.plot_failed_loading(avg_results, d_2)
+                self.plot_losr_revenue_rejection_and_delay(avg_results, d_2)
         elif self.data_description == 'train_load':
             for d_2 in Policy_Plot.decision_2_policy_list:
                 avg_results = self.concat_avg_results(d_2)
@@ -426,6 +428,38 @@ class Policy_Plot:
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Failed_Loading_vs_Policy.png')
         plt.show()
     
+
+
+    def plot_losr_revenue_rejection_and_delay(self, avg_results: pd.DataFrame, d_2: str):
+        # line plot for 'Lost_Revenue_Rejection' and 'Lost_Revenue_Delay' from avg_results on one figure
+        x_ticks = []
+        losr_revenue_rejection = []
+        losr_revenue_delay = []
+        for row in range(len(avg_results)):
+            policy = avg_results.loc[row,'Policy_abbr']
+            losr_revenue_rejection.append(float(avg_results.loc[row,'Lost_Revenue_Rejection'].split(',')[1].strip()))
+            losr_revenue_delay.append(float(avg_results.loc[row,'Lost_Revenue_Delay'].split(',')[1].strip()))
+            x_ticks.append(policy)
+
+        # Interpolate the data points
+        x = np.arange(len(x_ticks))
+        spl_rejection = make_interp_spline(x, losr_revenue_rejection, k=1)  # type: BSpline
+        spl_delay = make_interp_spline(x, losr_revenue_delay, k=1)  # type: BSpline
+
+        xnew = np.linspace(0, len(x_ticks)-1, num=1000, endpoint=True)
+
+        # one one figure plot two lines
+        plt.plot(xnew, spl_rejection(xnew), label='lost revenue from rejection', alpha= 0.5, color='r', linewidth=3)
+        plt.plot(xnew, spl_delay(xnew), label='delay penalty', alpha = 0.5, color='b', linewidth=3)
+        plt.axvline(x=2, color='gray', alpha = 0.5, linestyle='--')  # x=2 because Python uses 0-based indexing
+        plt.legend(fontsize=10 ,loc='upper left')
+        plt.xticks(x, x_ticks, rotation=0, fontsize=14)
+        plt.yticks([])
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Lost_Revenue_Rejection_Delay_vs_Theta.png')
+        plt.show()
+            
+
 
 ############################################################################################################
 # plot Total_Passenger_Extra for all Policy_abbr

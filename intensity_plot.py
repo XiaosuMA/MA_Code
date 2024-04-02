@@ -34,16 +34,16 @@ class Intensity_Plot:
     def plot_all(self):
         if self.data_description == 'request':
             data_list = self.generate_data_list()
-            # self.plot_delay_distruibution(data_list)
-            self.plot_avg_revenue_total_with_intensity(data_list)
-            self.plot_imaginary_revenue_percentage(data_list)
-            self.plot_reject_all_percentage(data_list)
+            # self.plot_avg_revenue_total_with_intensity(data_list)
+            # self.plot_imaginary_revenue_percentage(data_list)
+            # self.plot_reject_all_percentage(data_list)
             self.plot_none_delay(data_list)
-            self.plot_delay_0_delivery(data_list)
+            self.plot_delay_ture_of_accepted(data_list)
+            # self.plot_delay_0_delivery(data_list)
             self.plot_delivery_percentage(data_list)
-            self.plot_delay_true_waiting(data_list)
-            self.plot_delay_nan_waiting(data_list)
-            self.plot_failed_loading(data_list)
+            # self.plot_delay_true_waiting(data_list)
+            # self.plot_delay_nan_waiting(data_list)
+            # self.plot_failed_loading(data_list)
             
         elif self.data_description == 'train_load':
             data_list = self.generate_data_list()
@@ -83,7 +83,8 @@ class Intensity_Plot:
         return data_list
     
     ############################################################################################################################################################################
-    
+
+
     def plot_delay_distruibution(self, data_list):
         # dataframes = [avg_intensity1, avg_intensity1p5, avg_intensity2, avg_intensity2p5, avg_intensity3, avg_intensity3p5]
         for row in range(len(data_list[0])):
@@ -362,6 +363,65 @@ class Intensity_Plot:
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_None_Delay.png', dpi = 300)
         plt.show()        
+
+    
+    # plot 'Delay_True (of accepted)' for each intensity and policy
+    def plot_delay_ture_of_accepted(self, data_list):
+        y_1p25 = []
+        y_2p25 = []
+        y_3 = []
+        y_max_2 = -np.inf  # Initialize the maximum y-value
+        y_max_2p5 = -np.inf
+        # Plot Delay_0_delivery (% Accepted)
+        for row in range(len(data_list[0])):
+            x = []
+            y = []
+            for df in data_list:
+                policy = data_list[0].loc[row,'Seed_Time_Intensity, Policy'].split(',')[1].strip()
+                # Convert the policy name to its LaTeX representation
+                if policy in policy_to_latex:
+                    policy = policy_to_latex[policy]
+                intens = float(df.loc[row,'Seed_Time_Intensity, Policy'].split(',')[0].strip()[-3:])
+                avg_delay_true = float(df.loc[row,'Delay_True (of accepted)'].split(',')[1].strip())
+                x.append(intens)
+                y.append(avg_delay_true)
+
+            # Use the index of the loop to select a color from the list
+            color = colors[row % len(colors)]
+
+            # Create a new set of x values for the spline
+            xnew = np.linspace(min(x), max(x), 500)
+
+            # Create a spline function
+            spl = make_interp_spline(x, y, k=3)  # k = 3 or 5
+            y_smooth = spl(xnew)
+            y_1p25.append(spl(1.25))
+            y_2p25.append(spl(2.25))
+            y_3.append(spl(3.0))
+            y_max_2 = max(y_max_2, spl(2.0))
+            y_max_2p5 = max(y_max_2p5, spl(2.5))
+            plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
+        plt.title('Intensity vs Delay_True (of accepted)')
+        # plt.axhline(y=0.7, color='red', alpha = 0.3, linestyle='--')  
+        plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
+        plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
+        x_points = [1.25, 2.25, 3.0]
+        y_points = [y_1p25[0], y_2p25[2], y_3[3]]
+        labels = [r'$\theta^{*}=0$', r'$\theta^{*}=2$', r'$\theta^{*}=3$']
+        # Display and annotate the points
+        for i, label in enumerate(labels):
+            plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
+            plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,+10), ha='center')
+
+        plt.xlabel('Intensity')  # Label for x-axis
+        plt.ylabel('Delay_True (of accepted)')  # Label for y-axis   
+        plt.legend()
+        plt.xticks(rotation=0)  # Rotate x-axis labels
+        plt.ylim(bottom=0)
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_True_(of accepted).png', dpi = 300)
+        plt.show()  
+
 
     def plot_delay_0_delivery(self, data_list):
         y_1p25 = []
@@ -808,8 +868,8 @@ class Intensity_Plot:
         plt.show()
 
 
-# check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'request')
-# check_run.plot_all()
+check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'request')
+check_run.plot_all()
 
 # check_run = Intensity_Plot(passenger_demand_mode = 'linear', data_description = 'request')
 # check_run.plot_all()

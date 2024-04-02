@@ -114,6 +114,7 @@ class Revenue_Result:
         cond_status_3 = STU_requests_df['Status'] == 3   # Delivered
         cond_delay_0 = STU_requests_df['Delay'] == 0     # On time, rejected has delay of np.nan, not counted hier
         cond_delay_nan = STU_requests_df['Delay'].isna()  # Rejected or Arrival to late, excceded simulation time
+        cond_delay_true = STU_requests_df['Delay'] > 0
         cond_delay_0_15 = (STU_requests_df['Delay'] > 0) & (STU_requests_df['Delay'] <= 15)
         cond_delay_15_30 = (STU_requests_df['Delay'] > 15) & (STU_requests_df['Delay'] <= 30)
         cond_delay_gt_30 = STU_requests_df['Delay'] > 30
@@ -133,6 +134,7 @@ class Revenue_Result:
         status_2 = cond_status_2.sum()
         status_1 = cond_status_1.sum()
         status_0 = cond_status_0.sum()
+        delay_true = cond_delay_true.sum()
 
         avg_failed_loading = np.round(np.mean(STU_requests_df['Failed_Loading'].dropna().to_list()), 6)
 
@@ -140,6 +142,7 @@ class Revenue_Result:
         STU_Accepted = status_1 + status_2 + status_3
         STU_Delivery = status_2 + status_3
         STU_None_Delay = delay_0_delivery + delay_0_waiting + delay_nan_waiting
+    
         
 
         revenue_1 = Revenue_Result.revenue_of_rejection_or_uncompletion * (status_0 + delay_0_waiting + delay_nan_waiting)
@@ -150,6 +153,8 @@ class Revenue_Result:
         penalty_delay_true_waiting = Revenue_Result.delay_0_15_waiting_penalty * delay_0_15_waiting + Revenue_Result.delay_15_30_waiting_penalty * delay_15_30_waiting + Revenue_Result.delay_gt_30_waiting_penalty * delay_gt_30_waiting
         total_revenue = np.round(revenue_1 + revenue_2 + revenue_3 + revenue_4 + revenue_5 - penalty_delay_true_waiting, 6)
         imaginary_revenue = np.round(STU_requests_df['Revenue'].sum(), 6)   # if we get all revenues, without any rejection or delay
+        lost_revenue_rejection = STU_requests_df.loc[cond_status_0, 'Revenue'].sum() - Revenue_Result.revenue_of_rejection_or_uncompletion * status_0
+        lost_revenue_delay = STU_requests_df.loc[cond_delay_true, 'Revenue'].sum() - (revenue_4 + revenue_5) + penalty_delay_true_waiting
         # print(f'revenue_1 = {revenue_1}, revenue_2 = {revenue_2}, revenue_3 = {revenue_3}, revenue_4 = {revenue_4}, revenue_5 = {revenue_5}, total_revenue = {total_revenue}')
         # print(f"status_3 without delay: {STU_requests_df.loc[cond_status_3 & cond_delay_0, 'Revenue'].to_list()} \n R3_total: {sum(STU_requests_df.loc[cond_status_3 & cond_delay_0, 'Revenue'].to_list())}")
         # print('#############################################################################################################')
@@ -167,6 +172,7 @@ class Revenue_Result:
             'Delay_15_30_delivery': [[delay_15_30_delivery, np.round(delay_15_30_delivery / STU_Delivery, 3)]],
             'Delay_gt_30_delivery': [[delay_gt_30_delivery, np.round(delay_gt_30_delivery / STU_Delivery, 3)]],
             'None_Delay (of accepted)': [[STU_None_Delay, np.round(STU_None_Delay / STU_Accepted, 3)]],
+            'Delay_True (of accepted)': [[delay_true, np.round(delay_true / STU_Accepted, 3)]],
             'Delay_0_waiting (of accepted)': [[delay_0_waiting, np.round(delay_0_waiting / STU_Accepted, 3)]],
             'Delay_nan_waiting': [[delay_nan_waiting, np.round(delay_nan_waiting / STU_Accepted, 3)]],
             'Delay_true_waiting': [[delay_true_waiting, np.round(delay_true_waiting / STU_Accepted, 3)]],
@@ -177,6 +183,8 @@ class Revenue_Result:
             'On_Train': [[status_2, np.round(status_2 / STU_Total, 3)]],
             'Waiting': [[status_1, np.round(status_1 / STU_Total, 3)]],
             'Rejected': [[status_0, np.round(status_0 / STU_Total, 3)]],
+            'Lost_Revenue_Rejection': [[-100, lost_revenue_rejection]],
+            'Lost_Revenue_Delay': [[-100, lost_revenue_delay]],
             'Avg_Failed_Loading': [[-100, avg_failed_loading]]
         }
         result = pd.DataFrame(result, index=[0])
