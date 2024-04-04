@@ -1,342 +1,313 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 
+# Define a function to format y ticks
+def to_percent(y, position):
+    return str(np.round(100 * y))
+formatter = FuncFormatter(to_percent)
 
-class Sensitivity_Plot:
+from class_simulator import Transport_Simulator
+class Case_Plot:
 
     # Policy:
-    decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 'Available_Train_2_Or_Revenue', 'Available_Train_3']
+    decision_1_policy_list = ['Accept_All', 'Available_Train_1', 'Available_Train_2', 
+                              #'Available_Train_2_Or_Revenue', 
+                              'Available_Train_3', 'Available_Train_4', 'Available_Train_5']
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     data_description_set = ['train_load', 'request']
+    sensitivity_pattern_set = Transport_Simulator.sensitivity_pattern_set
+    #['Passenger_Demand_Time_Intensity', 'STU_Demand_Station_Intensity', 'STU_Demand_Time_Intensity'] 
+    STU_arrival_over_station_set = Transport_Simulator.STU_arrival_over_station_set
+    # ['uniform', 'hermes_peaks']   
 
-    def __init__(self, sensitivity_pattern: str, data_description: str):
-        self.passenger_demand_mode = passenger_demand_mode
-        self.data_description = data_description
+
 
     def plot_all(self):
-        if self.data_description == 'request':
-            avg_results = self.concat_avg_results()
-            self.plot_delay_distribution(avg_results)
-            self.plot_revenue_total(avg_results)
-            self.plot_imaginary_revenue_percentage(avg_results)
-            self.plot_reject_all_revenue_percentage(avg_results)
-            self.plot_delay_0_delivery_percentage(avg_results)
-            self.plot_delivery_percentage(avg_results)
-            self.plot_delay_true_waiting_percentage(avg_results)
-        elif self.data_description == 'train_load':
-            avg_results = self.concat_avg_results()
-            print(avg_results)
-            self.plot_avg_total_passenger_extra(avg_results)
-            self.plot_avg_train_load_percentage(avg_results)
-            self.plot_avg_stu_onboard(avg_results)
-        else:
-            raise ValueError('Invalid data_description, please choose from "request" or "train_load"')
+        avg_results = self.concat_avg_results()
+        self.plot_revenue_total(avg_results)
+        self.plot_imaginary_revenue_percentage(avg_results)
+        self.plot_reject_all_revenue_percentage(avg_results)
+        self.plot_delay_0_delivery_percentage(avg_results)
+        self.plot_none_delay_percentage(avg_results)
+        self.plot_remaining_request_percentage(avg_results)
+        self.plot_delay_true_accepted_percentage(avg_results)
+        self.plot_avg_total_passenger_extra(avg_results)
+        self.plot_avg_train_load_percentage(avg_results)
+
         
 
     def concat_avg_results(self):
-        policy_list = []
         avg_results = pd.DataFrame()
-        for d_1 in Policy_Plot.decision_1_policy_list:
-            for d_2 in Policy_Plot.decision_2_policy_list:
-                policy = f'{d_1}_{d_2}'
-                policy_list.append(policy)
-        print(policy_list)
-        if self.data_description == 'request':
-            for policy_item in policy_list:
-                one_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\avg_results_{policy_item}.csv')
-                avg_results = pd.concat([avg_results, one_result], ignore_index=True)
+        basic_stu_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Passenger_Demand_Time_Intensity_Sensitivity\avg_results_Passenger_constant.csv')
+        basic_load_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Passenger_Demand_Time_Intensity_Sensitivity\avg_train_load_Passenger_constant.csv')
 
-            avg_results.reset_index(drop = True, inplace = True)
-            # Create abbreviation for Policies: for example, 'Available_Train_1_Random' -> 'A_T_1_R'
-            for row in range(len(avg_results)):
-                policy = avg_results.loc[row,'Seed_Time_Intensity, Policy'].split(',')[1].strip()
-                policy = '_'.join([word[0] for word in policy.split('_')])
-                avg_results.loc[row,'Policy_abbr'] = policy
-            return avg_results
-        
-        elif self.data_description == 'train_load':
-            for policy_item in policy_list:
-                one_result = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\avg_train_load_{policy_item}.csv')
-                avg_results = pd.concat([avg_results, one_result], ignore_index=True)
+        basic_data = pd.concat([basic_stu_data, basic_load_data], axis=1)
+        basic_data.drop(columns=['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode'], inplace=True)
+        # print(pa_constant_data)
 
-            avg_results.reset_index(drop = True, inplace = True)
-            # Create abbreviation for Policies: for example, 'Available_Train_1_Random' -> 'A_T_1_R'
-            for row in range(len(avg_results)):
-                policy = avg_results.loc[row,'Policy'].strip()
-                policy = '_'.join([word[0] for word in policy.split('_')])
-                avg_results.loc[row,'Policy_abbr'] = policy
-            return avg_results
-        else:
-            raise ValueError('Invalid data_description, please choose from "request" or "train_load"')
 
+        pa_linear_stu_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Passenger_Demand_Time_Intensity_Sensitivity\avg_results_Passenger_linear.csv')
+        pa_linear_load_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Passenger_Demand_Time_Intensity_Sensitivity\avg_train_load_Passenger_linear.csv')
+        station_hermes_stu_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\STU_Demand_Station_Intensity_Sensitivity\avg_results_Station_hermes_peaks.csv')
+        station_hermes_load_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\STU_Demand_Station_Intensity_Sensitivity\avg_train_load_Station_hermes_peaks.csv')
+
+        pa_linear_data = pd.concat([pa_linear_stu_data, pa_linear_load_data], axis=1)
+        pa_linear_data.drop(columns=['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode'], inplace=True)
+        # print(pa_linear_data)
+        station_hermes_data = pd.concat([station_hermes_stu_data, station_hermes_load_data], axis=1)
+        station_hermes_data.drop(columns=['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode'], inplace=True)
+        # print(station_hermes_data)
+
+        case_data = pd.concat([basic_data, pa_linear_data, station_hermes_data], axis=0)
+        cols = case_data.columns.tolist()
+        cols.insert(0, cols.pop(cols.index('Passenger_Demand_Mode')))
+        cols.insert(1, cols.pop(cols.index('STU_Demand_Mode')))
+        case_data = case_data.reindex(columns=cols)
+
+        avg_results = case_data
+        avg_results = case_data.reset_index(drop=True)
+        avg_results.to_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\summary_avg_results.csv', index=False)
+
+        return avg_results
+    
 ############################################################################################################
-        
-    # Plot distribution of Delay_0_delivery (% Accepted), Delay_0_15_delivery, Delay_15_30_delivery, Delay_gt_30_delivery, Delay_0_waiting, Delay_nan_waiting(late_arrival), Delay_true_waiting
-    def plot_delay_distribution(self, avg_results: pd.DataFrame):
-        # Create subplots outside of the loop
-        fig, axs = plt.subplots(len(avg_results)//2, 2, figsize=(10, 10), sharey=True)
-        # Add main title
-        fig.suptitle('Delay_Distribution_of_Policy', fontsize=12)
-
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-
-            delay_0_delivery = float(avg_results.loc[row,'Delay_0_delivery (% Accepted)'].split(',')[1].strip())
-            delay_0_15_delivery = float(avg_results.loc[row,'Delay_0_15_delivery'].split(',')[1].strip())
-            delay_15_30_delivery = float(avg_results.loc[row,'Delay_15_30_delivery'].split(',')[1].strip())
-            delay_gt_30_delivery = float(avg_results.loc[row,'Delay_gt_30_delivery'].split(',')[1].strip())
-            delay_0_waiting = float(avg_results.loc[row,'Delay_0_waiting'].split(',')[1].strip())
-            delay_nan_waiting = float(avg_results.loc[row,'Delay_nan_waiting(late_arrival)'].split(',')[1].strip())
-            delay_true_waiting = float(avg_results.loc[row,'Delay_true_waiting'].split(',')[1].strip())
-            data = [delay_0_delivery, delay_0_15_delivery, delay_15_30_delivery, delay_gt_30_delivery, delay_0_waiting, delay_nan_waiting, delay_true_waiting]
-            x_ticks = ['Delay_0_delivery', 'Delay_0_15_delivery', 'Delay_15_30_delivery', 'Delay_gt_30_delivery', 'Delay_0_waiting', 'Delay_nan_waiting', 'Delay_true_waiting']
-
-            # Plot data on the subplot
-            ax = axs[row//2, row%2]
-            ax.bar(x_ticks, data, label=policy, alpha=0.5)
-            # ax.set_title(f'{policy}')
-            # ax.set_xlabel('Delay Type')
-            ax.set_ylabel('Log_Percentage')
-            ax.legend()
-            ax.set_xticks(range(len(x_ticks)))  # Set x-tick locations
-            ax.set_xticklabels(x_ticks, rotation=60)  # Set x-tick labels
-            ax.set_yscale('log')  # Set y-axis to logarithmic scale
-
-            # Hide x-ticks for all but the last two subplots
-            if row < len(avg_results) - 2:
-                plt.setp(ax.get_xticklabels(), visible=False)
-        plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Delay_Distribution_each_Policy.png')
-        plt.show()
-
 
     def plot_revenue_total(self, avg_results: pd.DataFrame):
-        # plot the Revenue_Total for each policy
-        x_ticks = []
-        revenues = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            revenue_total = float(avg_results.loc[row,'STU_Total, Revenue_Total'].split(',')[1].strip())
-            tick = policy
-            x_ticks.append(tick)
-            revenues.append(revenue_total)
-        plt.bar(x_ticks, revenues, label='policies', alpha=0.5)
-        max_revenue = max(revenues)
-        plt.axhline(y=max_revenue, color='black', linestyle='--')
-        plt.annotate('Max: {:.2f}'.format(max_revenue), xy=(1, max_revenue), xytext=(8, 0), 
-                    xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.xticks(rotation=60)
-        plt.xlabel('Policy')
-        plt.ylabel('Revenue_Total')
-        plt.legend()
-        plt.title('Revenue_Total for each policy')
-        # Set the limits of y-axis
-        if self.passenger_demand_mode == 'constant':
-            plt.ylim([1600, max(revenues) + 100])
-        elif self.passenger_demand_mode == 'linear':
-            plt.ylim([1600, max(revenues) + 100])
+        revenue_total = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2] 
+        for row in avg_results.index:
+            revenue = float(avg_results.loc[row, 'STU_Total, Revenue_Total'].split(',')[1].strip())
+            revenue_total.append(revenue)
+        
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], revenue_total[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(revenue_total):
+            plt.text(i, v + 20, "{:.2f}".format(v), ha='center', va='bottom')
+        plt.title('Total Revenue')
+        plt.xlabel('Cases')
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Revenue_Total_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Total_Revenue.png', dpi = 300)
         plt.show()
 
-# plot Imaginary_Revenue, PRT to % for each policy
+
+
     def plot_imaginary_revenue_percentage(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        imaginary_revenues = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            imaginary_revenue = float(avg_results.loc[row,'Imaginary_Revenue, PRT to %'].split(',')[1].strip())
-            x_ticks.append(policy)
-            imaginary_revenues.append(imaginary_revenue)
-        plt.bar(x_ticks, imaginary_revenues, label='policies', alpha=0.5)
-        max_revenue = max(imaginary_revenues)
-        plt.axhline(y=max_revenue, color='black', linestyle='--')
-        plt.annotate('Max: {:.2f}'.format(max_revenue), xy=(1, max_revenue), xytext=(8, 0), 
-                    xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.axhline(y=1.0, color='red', linestyle='--')
-        plt.annotate('1.0: get all imaginary revenue', xy=(1, 1.0), xytext=(8, 0),
-                    xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.title('Imaginary_Revenue, PRT to % for each policy')
-        plt.xlabel('Policy')
-        plt.ylabel('Imaginary_Revenue, PRT to %')
-        plt.legend()
-        plt.xticks(rotation=60)
-        if self.passenger_demand_mode == 'constant':
-            plt.ylim([0.5, 1.1])
-        elif self.passenger_demand_mode == 'linear':
-            plt.ylim([0.2, 1.1])
+        imag_revenue_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2] 
+        for row in avg_results.index:
+            imag_revenue_str = avg_results.loc[row, 'Imaginary_Revenue, PFA Ratio']
+            imag_revenue = float(imag_revenue_str.split(',')[1].strip())
+            imag_revenue_percentage.append(imag_revenue)
+
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], imag_revenue_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(imag_revenue_percentage):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Imaginary Revenue Percentage')
+        plt.xlabel('Cases')
+        plt.ylabel('Percentage')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Imaginary_Revenue_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Imaginary_Revenue.png', dpi = 300)
         plt.show()
 
 
-    # Reject_All_Revenue, PRT to %
     def plot_reject_all_revenue_percentage(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            avg_reject_all_revenue_percentage_make = float(avg_results.loc[row,'Reject_All_Revenue, PRT to %'].split(',')[1].strip())
-            x_ticks.append(policy)
-            y.append(avg_reject_all_revenue_percentage_make)
+        reject_all_revenue_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2] 
+        for row in avg_results.index:
+            reject_all_revenue_str = avg_results.loc[row, 'Reject_All_Revenue, PFA Ratio']
+            reject_all_revenue = float(reject_all_revenue_str.split(',')[1].strip())
+            reject_all_revenue_percentage.append(reject_all_revenue)
 
-        plt.bar(x_ticks,y, label= 'PRT to %',  alpha=0.5)
-        plt.title('Reject_All_Revenue vs Policy Revenue, PRT to %')
-        plt.axhline(y=1.0, color='black', linestyle='--')  # Add horizontal dashed line at y=1.0
-        plt.annotate('Reject All Revenue Line', xy=(1, 1.0), xytext=(8, 0), 
-                    xycoords=('axes fraction', 'data'), textcoords='offset points')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Reject_All_Revenue, PRT to %')  # Label for y-axis   
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
-        if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.8)
-        elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.8)
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], reject_all_revenue_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(reject_all_revenue_percentage):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Reject All Revenue Percentage')
+        plt.xlabel('Cases')
+        plt.ylabel('Percentage')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Reject_All_Revenue_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Reject_All_Revenue.png', dpi = 300)
         plt.show()
 
 
-    # Plot Delay_0_delivery (% Accepted)
+
+
     def plot_delay_0_delivery_percentage(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            delay_0_delivery = float(avg_results.loc[row,'Delay_0_delivery (% Accepted)'].split(',')[1].strip())
-            x_ticks.append(policy)
-            y.append(delay_0_delivery)
+        delay_0_delivery_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2]
+        for row in avg_results.index:
+            delay_0_delivery_str = avg_results.loc[row, 'Delay_0_delivery (of delivery)']
+            delay_0_delivery = float(delay_0_delivery_str.split(',')[1].strip())
+            delay_0_delivery_percentage.append(delay_0_delivery)
 
-        plt.bar(x_ticks,y, label='Delay_0_delivery (% Accepted)', alpha=0.5)
-        plt.title('Policy vs Delay_0_delivery (% Accepted)')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Delay_0_delivery (% Accepted)')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
-        if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.4)
-        elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.4)
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], delay_0_delivery_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(delay_0_delivery_percentage):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Delay 0 Delivery Percentage')
+        plt.xlabel('Cases')
+        plt.ylabel('Percentage')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Delay_0_delivery_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Delay_0_Delivery.png', dpi = 300)
         plt.show()
 
-    # Plot Delivery (% Total), we could integrate how many cargos into ÖPNV
-    def plot_delivery_percentage(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            delivery_percentage = float(avg_results.loc[row,'Delivered (% Total)'].split(',')[1].strip()) + float(avg_results.loc[row,'On_Train'].split(',')[1].strip())
-            x_ticks.append(policy)
-            y.append(delivery_percentage)
+        
+    def plot_none_delay_percentage(self, avg_results: pd.DataFrame):
+        none_delay_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2]
+        for row in avg_results.index:
+            none_delay_str = avg_results.loc[row, 'None_Delay (of accepted)']
+            none_delay = float(none_delay_str.split(',')[1].strip())
+            none_delay_percentage.append(none_delay)
 
-        plt.bar(x_ticks,y, label='Delivery (% Total)', alpha=0.5)
-        plt.title('Policy vs Delivery (% Total)')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Delivery (% Total)')  # Label for y-axis
-        plt.axhline(y=0.6, color='black', linestyle='--')  # Add horizontal dashed line at y=0.6, 60% of total STU
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
-        if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.3)
-        elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.3)
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], none_delay_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(none_delay_percentage):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('None Delay Percentage')
+        plt.xlabel('Cases')
+        plt.ylabel('Percentage')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Delivery_(% Total)_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\None_Delay.png', dpi = 300)
         plt.show()
 
-    # Plot Delay_true_waiting, % to Accepted, How many worst case
-    def plot_delay_true_waiting_percentage(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            delay_true_waiting = float(avg_results.loc[row,'Delay_true_waiting'].split(',')[1].strip())
-            x_ticks.append(policy)
-            y.append(delay_true_waiting)
 
-        plt.bar(x_ticks,y, label='Delay_true_waiting, % to Accepted', alpha=0.5)
-        plt.title('Policy vs Delay_true_waiting, % to Accepted')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Delay_true_waiting, % to Accepted')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
+    def plot_remaining_request_percentage(self, avg_results: pd.DataFrame):
+        remaining_request_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2]
+        for row in avg_results.index:
+            delay_0_waiting_str = avg_results.loc[row, 'Delay_0_waiting (of accepted)']
+            delay_nan_waiting_str = avg_results.loc[row, 'Delay_nan_waiting']
+            delay_0_waiting = float(delay_0_waiting_str.split(',')[1].strip())
+            delay_nan_waiting = float(delay_nan_waiting_str.split(',')[1].strip())
+            remaining_request = delay_0_waiting + delay_nan_waiting
+            remaining_request_percentage.append(remaining_request)
+
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], remaining_request_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(remaining_request_percentage):
+            plt.text(i, v + 0.001, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Remaining Request Percentage')
+        plt.xlabel('Cases')
+        plt.ylabel('Percentage')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Delay_true_waiting_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Remaining_Request.png', dpi = 300)
         plt.show()
 
-############################################################################################################
-# plot Total_Passenger_Extra for all Policy_abbr
+
+    # plot 'Delay_True (of accepted)' for random and FCFS policies
+    def plot_delay_true_accepted_percentage(self, avg_results: pd.DataFrame):
+        delay_true_accepted_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2]
+        for row in avg_results.index:
+            delay_true_accepted_str = avg_results.loc[row, 'Delay_True (of accepted)']
+            delay_true_accepted = float(delay_true_accepted_str.split(',')[1].strip())
+            delay_true_accepted_percentage.append(delay_true_accepted)
+
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], delay_true_accepted_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(delay_true_accepted_percentage):
+            plt.text(i, v + 0.0001, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Delay True Accepted Percentage')
+        plt.xlabel('Cases')
+        plt.ylabel('Percentage')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Delay_True_Accepted.png', dpi = 300)
+        plt.show()
+
+
+
+# ############################################################################################################
     def plot_avg_total_passenger_extra(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            total_passenger_extra = float(avg_results.loc[row,'Total_Passenger_Extra'])
-            x_ticks.append(policy)
-            y.append(total_passenger_extra)
+        avg_total_passenger_extra = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2]
+        for row in avg_results.index:
+            avg_total_passenger_extra_str = avg_results.loc[row, 'Total_Passenger_Extra']
+            avg_total_passenger_extra.append(float(avg_total_passenger_extra_str))
 
-        plt.bar(x_ticks,y, label='Total_Passenger_Extra', alpha=0.5)
-        plt.title('Policy vs Total_Passenger_Extra')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Total_Passenger_Extra')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], avg_total_passenger_extra[i], color='gray', alpha=alphas[i])
+        
+        for i, v in enumerate(avg_total_passenger_extra):
+            plt.text(i, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom')
+        plt.title('Average Total Passenger Extra')
+        plt.xlabel('Cases')
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Total_Passenger_Extra_vs_Policy.png')
-        plt.show()       
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Total_Passenger_Extra.png', dpi = 300)
+        plt.show()
 
-# plot Average_Train_Load_Percentage for all Policy_abbr
+
+# plot Average_Train_Load_Percentage 
     def plot_avg_train_load_percentage(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            avg_train_load_percentage = float(avg_results.loc[row,'Average_Train_Load_Percentage'])
-            x_ticks.append(policy)
-            y.append(avg_train_load_percentage)
+        avg_train_load_percentage = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
+        alphas = [1.0, 0.5, 0.2]
+        for row in avg_results.index:
+            avg_train_load_percentage_str = avg_results.loc[row, 'Average_Train_Load_Percentage']
+            avg_train_load_percentage.append(float(avg_train_load_percentage_str))
 
-        plt.bar(x_ticks,y, label='Average_Train_Load_Percentage', alpha=0.5)
-        plt.title('Policy vs Average_Train_Load_Percentage')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Average_Train_Load_Percentage')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
-        plt.ylim(bottom=0.675)
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], avg_train_load_percentage[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(avg_train_load_percentage):
+            plt.text(i, v + 0.001, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Average Train Load Percentage')
+        plt.xlabel('Cases')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Average_Train_Load_Percentage_vs_Policy.png')
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Average_Train_Load_Percentage.png', dpi = 300)
         plt.show()
 
-# plot Average_STU_Onboard for all Policy_abbr
-    def plot_avg_stu_onboard(self, avg_results: pd.DataFrame):
-        x_ticks = []
-        y = []
-        for row in range(len(avg_results)):
-            policy = avg_results.loc[row,'Policy_abbr']
-            avg_stu_onboard = float(avg_results.loc[row,'Average_STU_Onboard'])
-            x_ticks.append(policy)
-            y.append(avg_stu_onboard)
 
-        plt.bar(x_ticks,y, label='Average_STU_Onboard', alpha=0.5)
-        plt.title('Policy vs Average_STU_Onboard')
-        plt.xlabel('Policy')  # Label for x-axis
-        plt.ylabel('Avg_Average_STU_Onboard')  # Label for y-axis
-        plt.legend()
-        plt.xticks(rotation=60)  # Rotate x-axis labels
-        plt.ylim(bottom=2.5)
-        plt.tight_layout()
-        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Average_STU_Onboard_vs_Policy.png')
-        plt.show()
 
 ############################################################################################################
 
-
-# plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
-# plots.plot_all()
-
-# plots = Policy_Plot(passenger_demand_mode='linear', data_description='train_load')
-# plots.plot_all()
+test_plot = Case_Plot()
+# test_plot.concat_avg_results()
+test_plot.plot_all()

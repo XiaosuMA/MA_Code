@@ -10,11 +10,14 @@ class Avg_Train_Load:
     decision_2_policy_list = ['Random', 'FCFS']
     passenger_demand_mode_set = ['constant', 'linear']
     arrival_intensity_list = Transport_Simulator.test_cargo_time_intensity_set
+    STU_arrival_over_station_set = Transport_Simulator.STU_arrival_over_station_set
+    STU_arrival_over_time_set = Transport_Simulator.STU_arrival_over_time_set
     group = 100 # 50 Seeds
     start_seed = 1925
 
-    def __init__(self, selection_mode):
+    def __init__(self, selection_mode: str, sensitivity_pattern: str):
         self.selection_mode = selection_mode
+        self.sensitivity_pattern = sensitivity_pattern
 
     def output_avg_results(self):
         if self.selection_mode == 'Policy_Selection':
@@ -35,6 +38,31 @@ class Avg_Train_Load:
                     avg_results = self.process_avg_results(main_dir, sub_dir)
 
                     avg_results.to_csv(rf'{main_dir}\avg_train_load_intensity{intensity}.csv', index = False)
+
+        elif self.selection_mode == 'Sensitivity_Analysis':
+            main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\{self.sensitivity_pattern}_Sensitivity'
+            if self.sensitivity_pattern == 'Passenger_Demand_Time_Intensity':
+                for passenger_demand_mode in Avg_Train_Load.passenger_demand_mode_set:
+                    sub_dir= f'Passenger_{passenger_demand_mode}'
+                    avg_results = self.process_avg_results(main_dir, sub_dir)
+                    print(avg_results)
+                    avg_results.to_csv(rf'{main_dir}\avg_train_load_{sub_dir}.csv', index = False)
+            elif self.sensitivity_pattern == 'STU_Demand_Time_Intensity':
+                for arrival_over_time in Avg_Train_Load.STU_arrival_over_time_set:
+                    sub_dir= f'Intensity_{arrival_over_time}'
+                    avg_results = self.process_avg_results(main_dir, sub_dir)
+                    print(avg_results)
+                    avg_results.to_csv(rf'{main_dir}\avg_train_load_{sub_dir}.csv', index = False)
+            elif self.sensitivity_pattern == 'STU_Demand_Station_Intensity':
+                for arrival_over_station in Avg_Train_Load.STU_arrival_over_station_set:
+                    sub_dir= f'Station_{arrival_over_station}'
+                    avg_results = self.process_avg_results(main_dir, sub_dir)
+                    print(avg_results)
+                    avg_results.to_csv(rf'{main_dir}\avg_train_load_{sub_dir}.csv', index = False)
+            else:
+                raise ValueError('The sensitivity pattern is not valid')
+        else:
+            raise ValueError('The selection mode is not valid')
 ############################################################################################################################################################################ 
 
     def process_avg_results(self, main_dir, sub_dir):
@@ -90,9 +118,14 @@ class Avg_Train_Load:
         return avg_value
 
 
-# instance_avg_train_load = Avg_Train_Load(selection_mode = 'Policy_Selection')
+# instance_avg_train_load = Avg_Train_Load(selection_mode = 'Policy_Selection', sensitivity_pattern = None)
 # instance_avg_train_load.output_avg_results()
     
-# instance_avg_train_load = Avg_Train_Load(selection_mode = 'STU_Time_Intensity_Selection')
+# instance_avg_train_load = Avg_Train_Load(selection_mode = 'STU_Time_Intensity_Selection', sensitivity_pattern = None)
 # instance_avg_train_load.output_avg_results()
     
+# instance_avg_train_load = Avg_Train_Load(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'Passenger_Demand_Time_Intensity')
+# instance_avg_train_load.output_avg_results()
+
+# instance_avg_train_load = Avg_Train_Load(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity')
+# instance_avg_train_load.output_avg_results()

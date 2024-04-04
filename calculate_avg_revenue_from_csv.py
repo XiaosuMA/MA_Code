@@ -132,6 +132,9 @@ class Avg_Revenue:
 
 # get_avg_revenue = Avg_Revenue(selection_mode = 'STU_Time_Intensity_Selection', sensitivity_pattern = None)
 # get_avg_revenue.output_avg_results()
+
+# get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'Passenger_Demand_Time_Intensity')
+# get_avg_revenue.output_avg_results()
     
 # get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity')
 # get_avg_revenue.output_avg_results()

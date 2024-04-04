@@ -1,6 +1,12 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
+
+# Define a function to format y ticks
+def to_percent(y, position):
+    return str(np.round(100 * y))
+formatter = FuncFormatter(to_percent)
 
 
 class Policy_Plot:
@@ -27,7 +33,7 @@ class Policy_Plot:
             self.plot_reject_all_revenue_percentage(avg_results)
             self.plot_delay_0_delivery_percentage(avg_results)
             self.plot_none_delay_percentage(avg_results)
-            self.plot_delay_nan_waiting_percentage(avg_results)
+            self.plot_remaining_request_percentage(avg_results)
             self.plot_delay_true_accepted_percentage(avg_results)
         elif self.data_description == 'train_load':
 
@@ -201,7 +207,11 @@ class Policy_Plot:
             plt.ylim([0.4, max_imaginary_revenue + 0.1])
         elif self.passenger_demand_mode == 'linear':
             plt.ylim([0.4, max_imaginary_revenue + 0.1])
-        plt.yticks([])
+        # plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Imaginary_Revenue_vs_Policy.png')
         plt.show()
@@ -271,7 +281,7 @@ class Policy_Plot:
             sign = '+' if residual >= 0 else '-'
             plt.text(i + width/2, reject_all_revenues_fcfs[i] + 0.01, sign + "{:.2f}%".format(abs(residual)*100), ha='center', va='bottom', fontsize=12)
 
-        plt.axhline(y=1.0, color='black', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=1.0 
+        # plt.axhline(y=1.0, color='black', alpha = 0.3, linestyle='--')
         plt.legend(fontsize=12 ,loc='upper right')
         plt.title('Reject All Revenue Ratios')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
@@ -279,7 +289,11 @@ class Policy_Plot:
             plt.ylim(bottom=1.0)
         elif self.passenger_demand_mode == 'linear':
             plt.ylim(bottom=0.8)
-        plt.yticks([])
+        # plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Reject_All_Revenue_vs_Policy.png')
         plt.show()
@@ -348,10 +362,14 @@ class Policy_Plot:
         plt.title('On Time Delivery Ratios')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         if self.passenger_demand_mode == 'constant':
-            plt.ylim(bottom=0.8)
+            plt.ylim(bottom=0.8, top = 1.07)
         elif self.passenger_demand_mode == 'linear':
-            plt.ylim(bottom=0.8)
-        plt.yticks([])
+            plt.ylim(bottom=0.8, top = 1.07)
+        # plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_0_delivery_vs_Policy.png')
         plt.show()
@@ -423,8 +441,13 @@ class Policy_Plot:
             plt.ylim(bottom=0.6)
         elif self.passenger_demand_mode == 'linear':
             plt.ylim(bottom=0.6)
-        plt.yticks([])
+        # plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
+        plt.gca().yaxis.set_major_formatter(formatter)
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\None_Delay_accepted_vs_Policy.png')
         plt.show()
 
@@ -460,36 +483,45 @@ class Policy_Plot:
     #     plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_nan_waiting_accepted_vs_Policy.png')
     #     plt.show()
 
-    def plot_delay_nan_waiting_percentage(self, avg_results: pd.DataFrame):
+    def plot_remaining_request_percentage(self, avg_results: pd.DataFrame):
         x_ticks = []
-        delay_nan_waiting_random = []
-        delay_nan_waiting_fcfs = []
+        remaining_request_random = []
+        remaining_request_fcfs = []
         for row in range(0, len(avg_results), 2):
             policy = [avg_results.loc[row,'Policy_abbr'], avg_results.loc[row+1,'Policy_abbr']]
             delay_nan_random = float(avg_results.loc[row,'Delay_nan_waiting'].split(',')[1].strip())
+            delay_0_waiting_random = float(avg_results.loc[row,'Delay_0_waiting (of accepted)'].split(',')[1].strip())
+            remain_request_random = delay_nan_random + delay_0_waiting_random
+
             delay_nan_fcfs = float(avg_results.loc[row+1,'Delay_nan_waiting'].split(',')[1].strip())
+            delay_0_waiting_fcfs = float(avg_results.loc[row+1,'Delay_0_waiting (of accepted)'].split(',')[1].strip())
+            remain_request_fcfs = delay_nan_fcfs + delay_0_waiting_fcfs
             x_ticks.append(policy)
-            delay_nan_waiting_random.append(delay_nan_random)
-            delay_nan_waiting_fcfs.append(delay_nan_fcfs)
+            remaining_request_random.append(remain_request_random)
+            remaining_request_fcfs.append(remain_request_fcfs)
 
         x_ticks = [r'$\pi_0$', r'$\pi_1$', r'$\pi_2$', r'$\pi_3$', r'$\pi_4$', r'$\pi_5$']
         x = np.arange(len(x_ticks))  # the label locations
         width = 0.35  # the width of the bars
 
-        plt.bar(x - width/2, delay_nan_waiting_random, width, label='Random', alpha=0.5, color='gray')
-        plt.bar(x + width/2, delay_nan_waiting_fcfs, width, label='FCFS', alpha=1, color='gray')
+        plt.bar(x - width/2, remaining_request_random, width, label='Random', alpha=0.5, color='gray')
+        plt.bar(x + width/2, remaining_request_fcfs, width, label='FCFS', alpha=1, color='gray')
 
         # Display the residual value on top of each odd bar
-        for i in range(len(delay_nan_waiting_random)):
-            residual = delay_nan_waiting_random[i] - delay_nan_waiting_fcfs[i]
+        for i in range(len(remaining_request_random)):
+            residual = remaining_request_random[i] - remaining_request_fcfs[i]
             sign = '+' if residual >= 0 else '-'
-            plt.text(i - width/2, delay_nan_waiting_random[i] + 0.01, sign + "{:.2f}%".format(abs(residual)*100), ha='center', va='bottom', fontsize=12)
+            plt.text(i - width/2, remaining_request_random[i] + 0.005, sign + "{:.2f}%".format(abs(residual)*100), ha='center', va='bottom', fontsize=12)
 
-        plt.legend(fontsize=12 ,loc='upper left')
+        plt.legend(fontsize=11 ,loc='upper right')
         plt.title('Remaining Request Ratios')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-        plt.ylim(bottom=0.0, top=0.20)
-        plt.yticks([])
+        plt.ylim(bottom=0, top=0.21)
+        #plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_nan_waiting_accepted_vs_Policy.png')
         plt.show()
@@ -523,8 +555,12 @@ class Policy_Plot:
         plt.legend(fontsize=12 ,loc='upper right')
         plt.title('Delay Ratios')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-        plt.ylim(bottom=0.0, top=0.20)
-        plt.yticks([])
+        plt.ylim(bottom=0.0, top=0.21)
+        # plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_True_of_accepted_vs_Policy.png')
 
@@ -557,7 +593,7 @@ class Policy_Plot:
         plt.legend(fontsize=12 ,loc='upper right')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         plt.ylim(bottom=0.0)
-        plt.yticks([])
+        # plt.yticks([])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Total_Passenger_Extra_vs_Policy.png')
         plt.show()   
@@ -590,7 +626,11 @@ class Policy_Plot:
         plt.legend(fontsize=12 ,loc='upper right')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         plt.ylim(bottom=0.5)
-        plt.yticks([])
+        # plt.yticks([])
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Average_Train_Load_Percentage_vs_Policy.png')
         plt.show()
