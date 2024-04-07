@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
 import logging
+import matplotlib.pyplot as plt
 
 import train_timetable_S1 as timetable
+
 
 
 # HVV passenger data (2014-2020), dirving from Source File: HVV_Passenger_Data_2014-2020.csv and S1_baseline_passenger_demand.py
@@ -16,7 +18,7 @@ passenger_onboard_changing_rate = [-0.08080999569151226,
                                     0.07825937096079283, 
                                     0.11358897027143477, 
                                     0.12548039638087038, 
-                                    -1]   # passenger_onboard = baseline_onboard * (changing_rate + 1)
+                                    -1]   # mean_passenger_onboard = baseline_onboard * (changing_rate + 1)
                                 # changing rate represent onboard passenger intensity at different stops
 
 # Base on both above generate Passenger Onboard Capacity Demand for each stop
@@ -139,3 +141,30 @@ class Passenger:
 # for i in range(0, 10):
 #     mu = np.mean(init_load_data.loc[init_load_data['Stop'] == i, 'Passenger_Demand'])
 #     mu_list.append(mu)
+
+#####################################################################################################################
+
+# S1_stops = ['Altona A', 'Jungfernstieg A', 'Berliner Tor A', 'Barmbek A', 'Ohlsdorf A', 'Ohlsdorf B', 'Barmbek B', 'Berliner Tor B', 'Jungfernstieg B', 'Altona B']
+
+# means_passenger_onboard = []
+# for rate in passenger_onboard_changing_rate:
+#     mean_passenger = passenger_onboard_baseline * (1 + rate)
+#     means_passenger_onboard.append(mean_passenger)
+# # print(means_passenger_onboard)
+# bars = plt.bar(S1_stops, means_passenger_onboard, color='gray', alpha=0.7)
+# plt.title('Stop specific Means of Onboard Passengers with\nBaseline and Changing Rates', fontsize=8)
+# plt.xticks(rotation=30, fontsize=8)  # Rotate x-axis labels for better visibility
+# plt.yticks([0, 10, 20, 30], fontsize=8)
+# # Add a dashed gray line at passenger_onboard_baseline
+# plt.axhline(passenger_onboard_baseline, color='gray', alpha = 0.3, linestyle='--')
+# # Annotate the baseline
+# centered_text = 'constant\n baseline:\n' + f'{np.round(passenger_onboard_baseline,3)}'
+# plt.annotate(centered_text, xy=(9.5, passenger_onboard_baseline), xytext=(-10, -10), textcoords='offset points', ha='center', va='bottom', fontsize=8, color='black', alpha=1)
+
+# # Add passenger_onboard_changing_rate values on top of each bar
+# for bar, rate in zip(bars, passenger_onboard_changing_rate):
+#     plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height()+0.05, f'{round(rate * 100, 2)}%', ha='center', va='bottom', fontsize=8)
+# plt.ylim(bottom = 0, top = 30)
+# plt.tight_layout()
+# plt.savefig('D:\\Nextcloud\\Data\\MA\\Code\\PyCode_MA\\Outputs\\means_of_onboard_passenger.png', dpi = 300)
+# plt.show()

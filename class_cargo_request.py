@@ -16,10 +16,8 @@ class STU_Request:
     train_0_arrival_last_stop_time = 75.0
     revenue_baseline = 10
     travel_times = [0, 10, 6, 10, 6, 2, 6, 10, 6, 10]
-    # TW_width_set = [10, 20, 30, 40, 50, 60]
     TW_width_set = [10, 15, 20, 25, 30, 35, 40, 45, 50]
     TW_prob = [1/9]*9
-    # early_booking_set = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
     early_booking_set = [10, 15, 20, 25, 30, 35, 40, 45, 50]    
     np_early_booking_set = np.array([10, 15, 20, 25, 30, 35, 40, 45, 50]) 
     # Define the mean and standard deviation, 
@@ -212,3 +210,39 @@ class STU_Request:
 # # STU_requests_df[STU_requests_df['Revenue'] > 9]
 # np.mean(STU_requests_df['Revenue'])
 # # min(STU_requests_df['Revenue'])
+
+
+############################################################################################################################################################################
+# hermes_peaks_prob = [0.22348367029548988, 0.14914463452566096, 0.12779937791601867, 0.31912908242612753, 0.18044323483670296]
+# uniform_prob = [0.2, 0.2, 0.2, 0.2, 0.2]
+# S1_stations = ['Altona', 'Jungfernstieg', 'Berliner Tor', 'Barmbek', 'Ohlsdorf'] 
+
+# bar_width = 0.35  # Set the width of the bars
+# index = np.arange(len(S1_stations))  # the x locations for the groups
+
+# # Create bars for uniform_prob
+# bars1 = plt.bar(index, uniform_prob, bar_width, color='gray', alpha=0.3, label='Uniform Probability')
+
+# # Create bars for hermes_peaks_prob
+# bars2 = plt.bar(index + bar_width, hermes_peaks_prob, bar_width, color='gray', alpha=0.7, label='Hermes Peaks Probability')
+
+# # plt.xlabel('S1 Stations')
+# # plt.ylabel('Probability')
+# plt.title('Departure(/Destination) Probability Distribution', fontsize=8)
+# plt.xticks(index + bar_width / 2, S1_stations, fontsize=8)  # Center x-axis labels for better visibility
+# plt.yticks([0.0, 0.10, 0.20, 0.30], fontsize=8)  # Set y-ticks
+# # Set legend names and position
+# plt.legend((bars1[0], bars2[0]), ('Uniform','Hermes Peaks'), loc='upper left', fontsize=8)
+
+# # Add uniform_prob values on top of each bar
+# for bar, prob in zip(bars1, uniform_prob):
+#     plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height()+0.005, f'{round(prob * 100, 2)}%', ha='center', va='bottom', fontsize=8)
+
+# # Add hermes_peaks_prob values on top of each bar
+# for bar, prob in zip(bars2, hermes_peaks_prob):
+#     plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height()+0.005, f'{round(prob * 100, 2)}%', ha='center', va='bottom', fontsize=8)
+
+# plt.ylim(0, 0.36)
+# plt.tight_layout()
+# plt.savefig('D:\\Nextcloud\\Data\\MA\\Code\\PyCode_MA\\Outputs\\station_departure_destination_probability_distribution.png', dpi=300)
+# plt.show()

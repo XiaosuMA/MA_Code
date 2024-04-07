@@ -29,7 +29,7 @@ class Policy_Plot:
             # self.plot_delay_distribution(avg_results_for_delay_distribution)
             avg_results = self.concat_avg_results()
             # self.plot_revenue_total(avg_results)
-            # self.plot_imaginary_revenue_percentage(avg_results)
+            self.plot_imaginary_revenue_percentage(avg_results)
             self.plot_reject_all_revenue_percentage(avg_results)
             self.plot_delay_0_delivery_percentage(avg_results)
             self.plot_none_delay_percentage(avg_results)
@@ -194,10 +194,11 @@ class Policy_Plot:
         plt.bar(x - width/2, imaginary_revenues_random, width, label='Random', alpha=0.5, color='gray')
         plt.bar(x + width/2, imaginary_revenues_fcfs, width, label='FCFS', alpha=1, color='gray')
 
-        for i, v in enumerate(imaginary_revenues_random):
-            plt.text(i - width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-        for i, v in enumerate(imaginary_revenues_fcfs):
-            plt.text(i + width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
+        # Display the residual value on top of each even bar
+        for i in range(len(imaginary_revenues_fcfs)):
+            residual = imaginary_revenues_fcfs[i] - imaginary_revenues_random[i]
+            sign = '+' if residual >= 0 else '-'
+            plt.text(i + width/2, imaginary_revenues_fcfs[i] + 0.01, sign + "{:.2f}%".format(abs(residual)*100), ha='center', va='bottom', fontsize=12)
 
         max_imaginary_revenue = max(max(imaginary_revenues_random), max(imaginary_revenues_fcfs))
         plt.axhline(y=max_imaginary_revenue, color='red', alpha = 0.3, linestyle='--')
@@ -638,8 +639,8 @@ class Policy_Plot:
 
 
 ############################################################################################################
-# plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
-# plots.plot_all()
+plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
+plots.plot_all()
 
 # plots = Policy_Plot(passenger_demand_mode='linear', data_description='request')
 # plots.plot_all()
