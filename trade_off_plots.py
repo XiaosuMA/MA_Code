@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
-# Define a function to format y ticks
+# function to format y ticks
 def to_percent(y, position):
     return str(np.round(100 * y))
 formatter = FuncFormatter(to_percent)

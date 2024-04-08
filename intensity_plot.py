@@ -5,6 +5,12 @@ from class_simulator import Transport_Simulator
 from scipy.interpolate import make_interp_spline, BSpline
 from matplotlib.ticker import MaxNLocator
 from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import FuncFormatter
+
+# function to format y ticks
+def to_percent(y, position):
+    return str(np.round(100 * y))
+formatter = FuncFormatter(to_percent)
 
 policy_to_latex = {
     'Accept_All_FCFS': r'$\pi_0^{FCFS}$',
@@ -35,16 +41,16 @@ class Intensity_Plot:
         if self.data_description == 'request':
             data_list = self.generate_data_list()
             # self.plot_avg_revenue_total_with_intensity(data_list)
-            # self.plot_imaginary_revenue_percentage(data_list)
-            # self.plot_reject_all_percentage(data_list)
+            self.plot_imaginary_revenue_percentage(data_list)
+            self.plot_reject_all_percentage(data_list)
             self.plot_none_delay(data_list)
             self.plot_delay_ture_of_accepted(data_list)
-            # self.plot_delay_0_delivery(data_list)
-            # self.plot_delivery_percentage(data_list)
+            self.plot_delay_0_delivery(data_list)
+            self.plot_delivery_percentage(data_list)
             self.plot_delay_true_waiting(data_list)
             self.plot_combined(data_list)
-            # self.plot_delay_nan_waiting(data_list)
-            # self.plot_failed_loading(data_list)
+            self.plot_delay_nan_waiting(data_list)
+            self.plot_failed_loading(data_list)
             
         elif self.data_description == 'train_load':
             data_list = self.generate_data_list()
@@ -216,10 +222,10 @@ class Intensity_Plot:
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             y_max_3 = max(y_max_3, spl(3.0))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Imaginary_Revenue, PFA Ratio')
+        plt.title('Imaginary Revenue Ratios')
         # plt.axhline(y=1.0, color='red', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=1.0, where get 100% of imaginary revenue
         # plt.axhline(y=0.8, color='red', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=0.8, where get 80% of imaginary revenue
-        plt.vlines(x=1.5, ymin=0, ymax=y_max_1p5, color='black', alpha = 0.3, linestyle='--')
+        # plt.vlines(x=1.5, ymin=0, ymax=y_max_1p5, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         # plt.plot([1.25, 2.25, 3.0], [y_max_1p25, y_max_2p25, y_max_3], linestyle='--', color= (246/255, 238/255, 40/255), alpha = 0.5)
@@ -231,7 +237,7 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,10), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Imaginary_Revenue Ratio')  # Label for y-axis
+        plt.ylabel('Imaginary Revenue Ratio')  # Label for y-axis
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0.2, top=1.05)
@@ -239,6 +245,10 @@ class Intensity_Plot:
         for num in plt.gca().get_yticklabels():
             if num.get_text() == '1.0':
                 num.set_color('red')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Imaginary_Revenue_PFA_Ratio.png', dpi = 300)
         plt.show()
 
@@ -280,7 +290,7 @@ class Intensity_Plot:
             y_max_3 = max(y_max_3, spl(3.0))
 
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Reject_All_Revenue, PFA Ratio')
+        plt.title('All Rejection Revenue Ratios')
         # plt.axhline(y=1.0, color='red',alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=1.0
         # plt.annotate('reject all profit', xy=(1, 1.0), xytext=(8, 0), 
         #             xycoords=('axes fraction', 'data'), textcoords='offset points')
@@ -295,7 +305,7 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,10), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Avg_All_Rejection_Ratio')  # Label for y-axis   
+        plt.ylabel('All Rejection Revenue Ratios')  # Label for y-axis   
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
 
@@ -306,6 +316,10 @@ class Intensity_Plot:
         for num in plt.gca().get_yticklabels():
             if num.get_text() == '1.0':
                 num.set_color('red')
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Reject_All_Revenue_PFA_Ratio.png', dpi = 300)
         plt.show()
 
@@ -344,7 +358,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs None_Delay (of accepted)')
+        plt.title('On-time Ratios of Accepted')
         # plt.axhline(y=0.7, color='red', alpha = 0.3, linestyle='--')  
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
@@ -357,10 +371,14 @@ class Intensity_Plot:
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,-20), ha='center')
 
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('None Delay Percentage of Accepted')  # Label for y-axis   
+        plt.ylabel('On-time Ratios of Accepted')  # Label for y-axis   
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0.7)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_None_Delay.png', dpi = 300)
         plt.show()        
@@ -403,7 +421,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Delay_True (of accepted)')
+        plt.title('Delay Ratios (out of accepted)')
         # plt.axhline(y=0.7, color='red', alpha = 0.3, linestyle='--')  
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
@@ -416,10 +434,14 @@ class Intensity_Plot:
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,+10), ha='center')
 
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Delay_True (of accepted)')  # Label for y-axis   
+        plt.ylabel('Delay Ratios (out of accepted)')  # Label for y-axis   
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_True_(of accepted).png', dpi = 300)
         plt.show()  
@@ -461,7 +483,7 @@ class Intensity_Plot:
             y_max_2p5 = max(y_max_2p5, spl(2.5))
 
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Delay_true_waiting, of accepted')
+        plt.title('Worst-case Ratios (out of accepted)')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         x_points = [1.25, 2.25, 3.0]
@@ -472,10 +494,14 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,10), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Delay_true_waiting, of accepted')  # Label for y-axis
+        plt.ylabel('Worst-case Ratios')  # Label for y-axis
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_true_waiting_of_accepted.png', dpi = 300)
         plt.show()
@@ -490,7 +516,7 @@ class Intensity_Plot:
         # Plot Delay_true_waiting, % to Accepted, How many worst case
         self.plot_on_ax(data_list, ax, 'Delay_true_waiting', '--', 'Intensity vs Delay_true_waiting, of accepted', 'Delay_true_waiting, of accepted', False, False)
 
-        plt.title('Intensity vs Delay Quote (of accepted)')
+        plt.title('Delay Ratios and Worst-case Ratios (out of accepted)')
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Combine_Delay_True_and_Delay_true_waiting.png', dpi = 300)
         plt.show()
@@ -543,7 +569,10 @@ class Intensity_Plot:
         ax.legend()
         plt.xticks(rotation=0)
         ax.set_ylim(bottom=0)
-
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
 ############################################################################################################################################################################
 
 
@@ -582,7 +611,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Delay_0 (of delivery)')
+        plt.title('Delay_0 (out of delivery)')
         # plt.axhline(y=0.8, color='red', alpha = 0.3, linestyle='--')  
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
@@ -598,6 +627,10 @@ class Intensity_Plot:
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0.9)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_0_of_delivery.png', dpi = 300)
         plt.show()
@@ -637,7 +670,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Delivery (of total)')
+        plt.title('Delivered Ratios (out of total)')
         plt.axhline(y=0.5, color='red', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=0.5, more than half of cargos should be delivered by ÖPNV
         plt.annotate('50%', xy=(1, 0.5), xytext=(8, 0), 
                     xycoords=('axes fraction', 'data'), textcoords='offset points')
@@ -651,11 +684,15 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,-20), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Delivery (of total)')  # Label for y-axis
+        plt.ylabel('Delivered Ratios (out of total)')  # Label for y-axis
         plt.legend(fontsize='small', bbox_to_anchor=(1, 1), loc='upper left')    
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.yticks(np.arange(0, 1.1, 0.2))  # Set x-axis labels
         plt.ylim(bottom=0)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delivery_of_total.png', dpi = 300)
         plt.show()
@@ -696,7 +733,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color)
-        plt.title('Intensity vs Delay_nan_waiting, of accepted')
+        plt.title('Delay_nan_waiting (out of accepted)')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         x_points = [1.25, 2.25, 3.0]
@@ -707,10 +744,14 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,-20), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Delay_nan_waiting, of accepted')  # Label for y-axis
+        plt.ylabel('Delay_nan_waiting out of accepted')  # Label for y-axis
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Delay_nan_waiting_of_accepted.png', dpi = 300)
         plt.show()
@@ -751,7 +792,7 @@ class Intensity_Plot:
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color)
 
-        plt.title('Intensity vs Avg_Failed Loading')
+        plt.title('Avg_Failed Loading')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         x_points = [1.25, 2.25, 3.0]
@@ -807,7 +848,7 @@ class Intensity_Plot:
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0, color=color) 
         plt.title('Intensity vs Average Total Passenger Extra')
-        # plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
+        plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         # plt.axhline(y=10, color='red', alpha = 0.3, linestyle='--')
         x_points = [1.25, 2.25, 3.0]
@@ -864,10 +905,10 @@ class Intensity_Plot:
             y_max_2p5 = max(y_max_2p5, spl(2.5))
 
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Average Train Load Percentage')
+        plt.title('Average Train Load')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
-        plt.axhline(y=0.6, color='red', alpha = 0.3, linestyle='--')
+        plt.axhline(y=0.7, color='red', alpha = 0.3, linestyle='--')
         # plt.axhline(y=0.8, color='red', alpha = 0.3, linestyle='--')
 
         x_points = [1.25, 2.25, 3.0]
@@ -881,6 +922,10 @@ class Intensity_Plot:
         plt.ylabel('Average Train Load Percentage')
         plt.legend()# fontsize='small'
         plt.ylim(bottom=0.4)
+        plt.gca().yaxis.set_major_formatter(formatter)
+        y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Train_Load_Percentage.png', dpi = 300)
         plt.show()
@@ -938,8 +983,8 @@ class Intensity_Plot:
         plt.show()
 
 
-check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'request')
-check_run.plot_all()
+# check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'request')
+# check_run.plot_all()
 
 # check_run = Intensity_Plot(passenger_demand_mode = 'linear', data_description = 'request')
 # check_run.plot_all()
