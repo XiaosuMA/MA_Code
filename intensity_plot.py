@@ -358,7 +358,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('On-time Ratios of Accepted')
+        plt.title('On-Time Request Ratios of Accepted')
         # plt.axhline(y=0.7, color='red', alpha = 0.3, linestyle='--')  
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
@@ -371,10 +371,10 @@ class Intensity_Plot:
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,-20), ha='center')
 
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('On-time Ratios of Accepted')  # Label for y-axis   
+        plt.ylabel('On-Time Request Ratios of Accepted')  # Label for y-axis   
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
-        plt.ylim(bottom=0.7)
+        plt.ylim(bottom=0.7, top= 1.03)
         plt.gca().yaxis.set_major_formatter(formatter)
         y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
         y_label.set_position((0, 1))
@@ -670,7 +670,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Delivered Ratios (out of total)')
+        plt.title('Delivered Request Ratios (out of total)')
         plt.axhline(y=0.5, color='red', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=0.5, more than half of cargos should be delivered by ÖPNV
         plt.annotate('50%', xy=(1, 0.5), xytext=(8, 0), 
                     xycoords=('axes fraction', 'data'), textcoords='offset points')
@@ -684,11 +684,11 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,-20), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Delivered Ratios (out of total)')  # Label for y-axis
-        plt.legend(fontsize='small', bbox_to_anchor=(1, 1), loc='upper left')    
+        plt.ylabel('Delivered Request Ratios (out of total)')  # Label for y-axis
+        plt.legend(fontsize=10, bbox_to_anchor=(1, 1), loc='upper left')    
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.yticks(np.arange(0, 1.1, 0.2))  # Set x-axis labels
-        plt.ylim(bottom=0)
+        plt.ylim(bottom=0, top = 1.05)
         plt.gca().yaxis.set_major_formatter(formatter)
         y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
         y_label.set_position((0, 1))
@@ -847,7 +847,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0, color=color) 
-        plt.title('Intensity vs Average Total Passenger Extra')
+        plt.title('Average Total Extra Passengers')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         # plt.axhline(y=10, color='red', alpha = 0.3, linestyle='--')
@@ -859,7 +859,7 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,10), ha='center')
         plt.xlabel('Intensity')
-        plt.ylabel('Average Total Passenger Extra')
+        # plt.ylabel('Average Total Passenger Extra')
         plt.legend()
         plt.ylim(bottom=0)
         # Set y-axis to only show integer values
@@ -964,7 +964,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Intensity vs Average STU Onboard')
+        plt.title('Average Number of Onboard Request')
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
         x_points = [1.25, 2.25, 3.0]
@@ -975,7 +975,7 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,10), ha='center')
         plt.xlabel('Intensity')
-        plt.ylabel('Average STU Onboard')
+        # plt.ylabel('Average STU Onboard')
         plt.legend()
         plt.ylim(bottom=0)
         plt.tight_layout()
