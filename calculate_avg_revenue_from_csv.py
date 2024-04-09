@@ -15,9 +15,10 @@ class Avg_Revenue:
     group = 100 # 20 Seeds
     start_seed = 1925 # first seed
 
-    def __init__(self, selection_mode: str, sensitivity_pattern: str):
+    def __init__(self, selection_mode: str, sensitivity_pattern: str, mix: bool):
         self.selection_mode = selection_mode
         self.sensitivity_pattern = sensitivity_pattern
+        self.mix = mix
 
     def output_avg_results(self):
         if self.selection_mode == 'Policy_Selection':
@@ -54,11 +55,18 @@ class Avg_Revenue:
                     print(avg_results)
                     avg_results.to_csv(rf'{main_dir}\avg_results_{sub_dir}.csv', index = False)
             elif self.sensitivity_pattern == 'STU_Demand_Station_Intensity':
-                for arrival_over_station in Avg_Revenue.STU_arrival_over_station_set:
-                    sub_dir= f'Station_{arrival_over_station}'
+                if self.mix == False:
+                    for arrival_over_station in Avg_Revenue.STU_arrival_over_station_set:
+                        sub_dir= f'Station_{arrival_over_station}'
+                        avg_results = self.process_avg_results(main_dir, sub_dir)
+                        print(avg_results)
+                        avg_results.to_csv(rf'{main_dir}\avg_results_{sub_dir}.csv', index = False)
+                elif self.mix == True:
+                    sub_dir= f'Mixed'
                     avg_results = self.process_avg_results(main_dir, sub_dir)
                     print(avg_results)
                     avg_results.to_csv(rf'{main_dir}\avg_results_{sub_dir}.csv', index = False)
+
             else:
                 raise ValueError('The sensitivity pattern is not valid')
         else:
@@ -136,8 +144,11 @@ class Avg_Revenue:
 # get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'Passenger_Demand_Time_Intensity')
 # get_avg_revenue.output_avg_results()
     
-# get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity')
+# get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity', mix = False)
 # get_avg_revenue.output_avg_results()
+
+get_avg_revenue = Avg_Revenue(selection_mode = 'Sensitivity_Analysis', sensitivity_pattern = 'STU_Demand_Station_Intensity', mix = True)
+get_avg_revenue.output_avg_results()
     
 ############################################################################################################################################################################
 

@@ -24,32 +24,33 @@ sensitivity_pattern_set = Transport_Simulator.sensitivity_pattern_set
 STU_arrival_over_station_set = Transport_Simulator.STU_arrival_over_station_set
 # ['uniform', 'hermes_peaks']
 
-for sensitivity in [sensitivity_pattern_set[1]]:
-    for arrival_over_station in [STU_arrival_over_station_set[1]]:
+for sensitivity in ['STU_Demand_Station_Intensity']:
+    for arrival_over_station in ['hermes_peaks']:
         for decision_1 in ['Available_Train_2']: 
             for decision_2 in ['FCFS']:
-                for seed in range(1925, 2025): 
-                    # record current timestamp
-                    loop_start = datetime.now()
-                
-                    test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
-                                                STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = arrival_over_station, 
-                                                decision_1_policy = decision_1, decision_2_policy = decision_2, 
-                                                selection_mode='Sensitivity_Analysis', sensitivity_pattern = sensitivity, 
-                                                set_intensity_medium = None,
-                                                operation_time = 180, random_seed = seed) 
-                                                # simulation time is for STU arrival, simulation time is 75 + 180 = 255
+                for passenger_baseline in ['linear']:
+                    for seed in range(1925,2025): 
+                        # record current timestamp
+                        loop_start = datetime.now()
+                    
+                        test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_baseline, 
+                                                    STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = arrival_over_station, 
+                                                    decision_1_policy = decision_1, decision_2_policy = decision_2, 
+                                                    selection_mode='Sensitivity_Analysis', sensitivity_pattern = sensitivity, 
+                                                    set_intensity_medium = None,
+                                                    operation_time = 180, random_seed = seed) 
+                                                    # simulation time is for STU arrival, simulation time is 75 + 180 = 255
 
-                    test_run.run_simulation()
-                    final_load_status, final_STU_status = test_run.output_delivery_data()
-                    # record loop end timestamp
-                    loop_end = datetime.now()
-                    # find difference loop start and end time and display
-                    td = (loop_end - loop_start).total_seconds() * 10**3
-                    print(f"The time of execution of loop is : {td:.03f}ms")
-                    new_row = pd.DataFrame({'Sensitivity_Pattern': [sensitivity], 'Arrival_Over_Station': [arrival_over_station], 
-                                            'Decision_1': [decision_1], 'Decision_2': [decision_2], 'Seed': [seed], 'Execution_Time': [td]})
-                    excution_time = pd.concat([excution_time, new_row], ignore_index=True)
+                        test_run.run_simulation()
+                        final_load_status, final_STU_status = test_run.output_delivery_data()
+                        # record loop end timestamp
+                        loop_end = datetime.now()
+                        # find difference loop start and end time and display
+                        td = (loop_end - loop_start).total_seconds() * 10**3
+                        print(f"The time of execution of loop is : {td:.03f}ms")
+                        new_row = pd.DataFrame({'Sensitivity_Pattern': [sensitivity], 'Arrival_Over_Station': [arrival_over_station], 'Passenger_Baseline': [passenger_baseline],
+                                                'Decision_1': [decision_1], 'Decision_2': [decision_2], 'Seed': [seed], 'Execution_Time': [td]})
+                        excution_time = pd.concat([excution_time, new_row], ignore_index=True)
 
 dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\{sensitivity_pattern_set[1]}_Sensitivity'
 filename = f'execution_time_Station_{STU_arrival_over_station_set[1]}.csv'

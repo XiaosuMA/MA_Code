@@ -30,6 +30,7 @@ class Case_Plot:
         self.plot_revenue_total(avg_results)
         self.plot_imaginary_revenue_percentage(avg_results)
         self.plot_reject_all_revenue_percentage(avg_results)
+        self.plot_delivery_ratio(avg_results)
         self.plot_delay_0_delivery_percentage(avg_results)
         self.plot_none_delay_percentage(avg_results)
         self.plot_remaining_request_percentage(avg_results)
@@ -53,6 +54,8 @@ class Case_Plot:
         pa_linear_load_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Passenger_Demand_Time_Intensity_Sensitivity\avg_train_load_Passenger_linear.csv')
         station_hermes_stu_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\STU_Demand_Station_Intensity_Sensitivity\avg_results_Station_hermes_peaks.csv')
         station_hermes_load_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\STU_Demand_Station_Intensity_Sensitivity\avg_train_load_Station_hermes_peaks.csv')
+        mixed_stu_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\STU_Demand_Station_Intensity_Sensitivity\avg_results_Mixed.csv')
+        mixed_load_data = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\STU_Demand_Station_Intensity_Sensitivity\avg_train_load_Mixed.csv')
 
         pa_linear_data = pd.concat([pa_linear_stu_data, pa_linear_load_data], axis=1)
         pa_linear_data.drop(columns=['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode'], inplace=True)
@@ -60,8 +63,10 @@ class Case_Plot:
         station_hermes_data = pd.concat([station_hermes_stu_data, station_hermes_load_data], axis=1)
         station_hermes_data.drop(columns=['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode'], inplace=True)
         # print(station_hermes_data)
+        mixed_data = pd.concat([mixed_stu_data, mixed_load_data], axis=1)
+        mixed_data.drop(columns=['Seed_Time_Intensity, Policy', 'Passenger_Demand_Mode, STU_Demand_Mode'], inplace=True)
 
-        case_data = pd.concat([basic_data, pa_linear_data, station_hermes_data], axis=0)
+        case_data = pd.concat([basic_data, pa_linear_data, station_hermes_data, mixed_data], axis=0)
         cols = case_data.columns.tolist()
         cols.insert(0, cols.pop(cols.index('Passenger_Demand_Mode')))
         cols.insert(1, cols.pop(cols.index('STU_Demand_Mode')))
@@ -77,8 +82,8 @@ class Case_Plot:
 
     def plot_revenue_total(self, avg_results: pd.DataFrame):
         revenue_total = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2] 
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2]  
         for row in avg_results.index:
             revenue = float(avg_results.loc[row, 'STU_Total, Revenue_Total'].split(',')[1].strip())
             revenue_total.append(revenue)
@@ -98,8 +103,8 @@ class Case_Plot:
 
     def plot_imaginary_revenue_percentage(self, avg_results: pd.DataFrame):
         imag_revenue_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2] 
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             imag_revenue_str = avg_results.loc[row, 'Imaginary_Revenue, PFA Ratio']
             imag_revenue = float(imag_revenue_str.split(',')[1].strip())
@@ -124,8 +129,8 @@ class Case_Plot:
 
     def plot_reject_all_revenue_percentage(self, avg_results: pd.DataFrame):
         reject_all_revenue_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2] 
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2]  
         for row in avg_results.index:
             reject_all_revenue_str = avg_results.loc[row, 'Reject_All_Revenue, PFA Ratio']
             reject_all_revenue = float(reject_all_revenue_str.split(',')[1].strip())
@@ -148,12 +153,30 @@ class Case_Plot:
         plt.show()
 
 
+    def plot_delivery_ratio(self, avg_results: pd.DataFrame):
+        delivery_ratio = []
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
+        for row in avg_results.index:
+            delivery_percentage = float(avg_results.loc[row,'Delivered (of total)'].split(',')[1].strip()) + float(avg_results.loc[row,'On_Train'].split(',')[1].strip())
+            delivery_ratio.append(float(delivery_percentage))
+
+        for i in range(len(x_ticks)):
+            plt.bar(x_ticks[i], delivery_ratio[i], color='gray', alpha=alphas[i])
+
+        for i, v in enumerate(delivery_ratio):
+            plt.text(i, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom')
+        plt.title('Delivery Ratio')
+        plt.xlabel('Cases')
+        plt.tight_layout()
+        plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\Delivery_Ratio.png', dpi = 300)
+        plt.show()
 
 
     def plot_delay_0_delivery_percentage(self, avg_results: pd.DataFrame):
         delay_0_delivery_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2]
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             delay_0_delivery_str = avg_results.loc[row, 'Delay_0_delivery (of delivery)']
             delay_0_delivery = float(delay_0_delivery_str.split(',')[1].strip())
@@ -178,8 +201,8 @@ class Case_Plot:
         
     def plot_none_delay_percentage(self, avg_results: pd.DataFrame):
         none_delay_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2]
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             none_delay_str = avg_results.loc[row, 'None_Delay (of accepted)']
             none_delay = float(none_delay_str.split(',')[1].strip())
@@ -204,8 +227,8 @@ class Case_Plot:
 
     def plot_remaining_request_percentage(self, avg_results: pd.DataFrame):
         remaining_request_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2]
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             delay_0_waiting_str = avg_results.loc[row, 'Delay_0_waiting (of accepted)']
             delay_nan_waiting_str = avg_results.loc[row, 'Delay_nan_waiting']
@@ -234,8 +257,8 @@ class Case_Plot:
     # plot 'Delay_True (of accepted)' for random and FCFS policies
     def plot_delay_true_accepted_percentage(self, avg_results: pd.DataFrame):
         delay_true_accepted_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2]
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             delay_true_accepted_str = avg_results.loc[row, 'Delay_True (of accepted)']
             delay_true_accepted = float(delay_true_accepted_str.split(',')[1].strip())
@@ -262,8 +285,8 @@ class Case_Plot:
 # ############################################################################################################
     def plot_avg_total_passenger_extra(self, avg_results: pd.DataFrame):
         avg_total_passenger_extra = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2]
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             avg_total_passenger_extra_str = avg_results.loc[row, 'Total_Passenger_Extra']
             avg_total_passenger_extra.append(float(avg_total_passenger_extra_str))
@@ -283,8 +306,8 @@ class Case_Plot:
 # plot Average_Train_Load_Percentage 
     def plot_avg_train_load_percentage(self, avg_results: pd.DataFrame):
         avg_train_load_percentage = []
-        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand']
-        alphas = [1.0, 0.5, 0.2]
+        x_ticks = ['basic scenario', 'linear passenger demand', 'hermes freight demand', 'mixed']
+        alphas = [1.0, 0.7, 0.4, 0.2] 
         for row in avg_results.index:
             avg_train_load_percentage_str = avg_results.loc[row, 'Average_Train_Load_Percentage']
             avg_train_load_percentage.append(float(avg_train_load_percentage_str))

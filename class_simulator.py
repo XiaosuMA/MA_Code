@@ -272,8 +272,15 @@ class Transport_Simulator:
                     main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
                     sub_dir = f'Intensity_{self.STU_arrival_over_time}'
                 elif self.sensitivity_pattern == 'STU_Demand_Station_Intensity':
-                    main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
-                    sub_dir = f'Station_{self.STU_arrival_over_station}'
+                    if self.passenger_baseline_intensity_over_time == 'constant':
+                        main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
+                        sub_dir = f'Station_{self.STU_arrival_over_station}'
+                    elif self.passenger_baseline_intensity_over_time == 'linear':
+                        main_dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\{self.selection_mode}_Outputs\{self.sensitivity_pattern}_Sensitivity'
+                        sub_dir = f'Mixed'
+                        
+                    else:
+                        raise ValueError("Invalid passenger_baseline_intensity_over_time in STU_Demand_Station_Intensity run")
                 else:
                     pass
             else:
@@ -354,16 +361,17 @@ class Transport_Simulator:
 #                                selection_mode='Policy_Selection',  sensitivity_pattern = None, 
 #                                set_intensity_medium = None,
 #                                operation_time = 180, random_seed = 2020)
-    
-# test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
-#                                 STU_arrival_over_time = 'constant_high', STU_arrival_over_station = 'uniform', 
-#                                decision_1_policy = 'Available_Train_2', decision_2_policy = 'FCFS', 
-#                                selection_mode='Sensitivity_Analysis',  sensitivity_pattern = 'STU_Demand_Time_Intensity', 
-#                                set_intensity_medium = None,
-#                                operation_time = 180, random_seed = 2020)
 
-# test_run.run_simulation()
-# final_load_status, final_STU_status = test_run.output_delivery_data()
+# for seed in range(1925,1926):   
+#     test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'linear', 
+#                                     STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'hermes_peaks', 
+#                                 decision_1_policy = 'Available_Train_2', decision_2_policy = 'FCFS', 
+#                                 selection_mode='Sensitivity_Analysis',  sensitivity_pattern = 'STU_Demand_Station_Intensity', 
+#                                 set_intensity_medium = None,
+#                                 operation_time = 180, random_seed = seed)
+
+#     test_run.run_simulation()
+#     final_load_status, final_STU_status = test_run.output_delivery_data()
 # revenue_result = test_run.get_revenue_data()
 
 

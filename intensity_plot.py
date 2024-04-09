@@ -6,6 +6,8 @@ from scipy.interpolate import make_interp_spline, BSpline
 from matplotlib.ticker import MaxNLocator
 from matplotlib.ticker import MultipleLocator
 from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FormatStrFormatter
+
 
 # function to format y ticks
 def to_percent(y, position):
@@ -40,7 +42,7 @@ class Intensity_Plot:
     def plot_all(self):
         if self.data_description == 'request':
             data_list = self.generate_data_list()
-            # self.plot_avg_revenue_total_with_intensity(data_list)
+            self.plot_avg_revenue_total_with_intensity(data_list)
             self.plot_imaginary_revenue_percentage(data_list)
             self.plot_reject_all_percentage(data_list)
             self.plot_none_delay(data_list)
@@ -163,7 +165,7 @@ class Intensity_Plot:
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             y_max_3 = max(y_max_3, spl(3.0))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color, linewidth=1.5) 
-        plt.title('Intensity vs Average Revenue')
+        plt.title('Overall Revenue')
         # Draw the vertical lines at the maximum y-value
         plt.vlines(x=2.0, ymin=0, ymax=y_max_2, color='black', alpha = 0.3, linestyle='--')
         plt.vlines(x=2.5, ymin=0, ymax=y_max_2p5, color='black', alpha = 0.3, linestyle='--')
@@ -177,10 +179,13 @@ class Intensity_Plot:
             plt.scatter(x_points[i], y_points[i], color=(246/255, 238/255, 40/255), s=100)  # Adjust point size with 's' parameter
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,10), ha='center')
         plt.xlabel('Intensity')  # Label for x-axis
-        plt.ylabel('Average Revenue')  # Label for y-axis   
+        # plt.ylabel('Average Revenue')  # Label for y-axis   
         plt.legend()
         plt.xticks(rotation=0)  # Rotate x-axis labels
         plt.ylim(bottom=0)
+        y_label = plt.gca().set_ylabel('(units)', labelpad=-15)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Revenue_Total.png', dpi = 300)
         plt.show()
@@ -862,10 +867,15 @@ class Intensity_Plot:
         # plt.ylabel('Average Total Passenger Extra')
         plt.legend()
         plt.ylim(bottom=0)
-        # Set y-axis to only show integer values
-        plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+        plt.yticks(np.arange(0.0, 21.0, 4.0))  # Set y-axis labels
+        plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+        # # Set y-axis to only show integer values
+        # plt.gca().yaxis.set_major_locator(MaxNLocator(integer=False))
         # Set y-axis to show ticks at multiples of 4
-        plt.gca().yaxis.set_major_locator(MultipleLocator(base=4))
+        # plt.gca().yaxis.set_major_locator(MultipleLocator(base=4.0))
+        y_label = plt.gca().set_ylabel('(units)', labelpad=-10)
+        y_label.set_position((0, 1))
+        y_label.set_rotation(0)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_Total_Passenger_Extra.png', dpi = 300)
         plt.show()
