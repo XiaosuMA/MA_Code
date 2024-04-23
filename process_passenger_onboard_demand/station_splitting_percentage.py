@@ -5,7 +5,7 @@ import process_passenger_onboard_demand.S1_baseline_passenger_demand as S1_B_P
 S1_P = S1_B_P.S1_P
 S1_W = S1_B_P.S1_W
 
-S1 = pd.read_csv('S1_2019.csv', encoding='latin-1')
+S1 = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\S1_Passenger_Data_2019.csv', encoding='latin-1')
 # drop rows from Stops 'Rissen' to ''Bahrenfeld'
 S1 = S1.drop(S1.index[0:8])
 # reverse rows last row becons first row and first row becons last row, reset index

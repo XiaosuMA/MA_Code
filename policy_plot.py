@@ -24,6 +24,7 @@ class Policy_Plot:
             # self.plot_delay_distribution(avg_results_for_delay_distribution)
             for d_2 in Policy_Plot.decision_2_policy_list:
                 avg_results = self.concat_avg_results(d_2)
+                self.plot_losr_revenue_rejection_and_delay(avg_results, d_2)
                 # self.plot_revenue_total(avg_results, d_2)
                 # self.plot_imaginary_revenue_percentage(avg_results, d_2)
                 # self.plot_reject_all_revenue_percentage(avg_results, d_2)
@@ -33,7 +34,7 @@ class Policy_Plot:
                 # self.plot_none_delay_percentage(avg_results, d_2)
                 # self.plot_delay_nan_waiting_percentage(avg_results, d_2)
                 # self.plot_failed_loading(avg_results, d_2)
-                self.plot_losr_revenue_rejection_and_delay(avg_results, d_2)
+                
         elif self.data_description == 'train_load':
             for d_2 in Policy_Plot.decision_2_policy_list:
                 avg_results = self.concat_avg_results(d_2)
@@ -441,6 +442,7 @@ class Policy_Plot:
             losr_revenue_delay.append(float(avg_results.loc[row,'Lost_Revenue_Delay'].split(',')[1].strip()))
             x_ticks.append(policy)
 
+
         # Interpolate the data points
         x = np.arange(len(x_ticks))
         spl_rejection = make_interp_spline(x, losr_revenue_rejection, k=1)  # type: BSpline
@@ -449,12 +451,13 @@ class Policy_Plot:
         xnew = np.linspace(0, len(x_ticks)-1, num=1000, endpoint=True)
 
         # one one figure plot two lines
-        plt.plot(xnew, spl_rejection(xnew), label='lost revenue from rejection', alpha= 0.5, color='r', linewidth=3)
-        plt.plot(xnew, spl_delay(xnew), label='delay penalty', alpha = 0.5, color='b', linewidth=3)
+        plt.plot(xnew, spl_rejection(xnew), label='lost sales', alpha= 0.5, color='gray', linewidth=3)
+        plt.plot(xnew, spl_delay(xnew), label='delay penalties', alpha = 1, color='black', linewidth=3)
         plt.axvline(x=2, color='gray', alpha = 0.5, linestyle='--')  # x=2 because Python uses 0-based indexing
-        plt.legend(fontsize=10 ,loc='upper left')
+        plt.title('Trade-off between Lost Sales and Delay Penalties')
+        plt.legend(fontsize=12 ,loc='upper left')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-        plt.yticks([])
+        # plt.yticks([])
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\{d_2}_Lost_Revenue_Rejection_Delay_vs_Theta.png')
         plt.show()
@@ -543,6 +546,8 @@ class Policy_Plot:
         plt.show()
 
 ############################################################################################################
+# #Plotting for different passenger demand modes and data descriptions:
+
 # plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
 # plots.plot_all()
 

@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import logging
 import matplotlib.pyplot as plt
-
 import train_timetable_S1 as timetable
 
 
@@ -29,10 +28,9 @@ class Passenger:
     timetable_df = timetable.timetable_df
     timetable_pivot = timetable.timetable_pivot
     columns_train = ['Train_ID', 'Stop', 'Passenger_Demand', 'Passenger_Extra', 'Passenger_Onboard', 'STU_Onboard', 'Current_Load']
-    # baseline_start = passenger_onboard_baseline
     changing_rate = passenger_onboard_changing_rate 
     passenger_stop_std = 1.5
-    # passenger_stop_std = 0
+    # passenger_stop_std = 0 # for testing, debuging
     intensity_linear_rate = 2.5
     
 
@@ -63,7 +61,7 @@ class Passenger:
         if self.passenger_baseline_intensity_over_time == 'constant':
             intensity_linear_rate = 0
         elif self.passenger_baseline_intensity_over_time == 'linear':
-            intensity_linear_rate = Passenger.intensity_linear_rate   # passenger onboard demand baseline increase 3 every 30 minutes
+            intensity_linear_rate = Passenger.intensity_linear_rate 
 
         else:
             print('Error: passenger_baseline_intensity_over_time should be either constant or linear')
@@ -123,6 +121,9 @@ class Passenger:
         return init_load_data
     
 
+#####################################################################################################################
+#Debuging and Testing:
+
 # passenger_instance = Passenger(random_seed=2023, passenger_baseline_intensity_over_time='linear')
 # init_load_data = passenger_instance.generate_initial_load_data()
 
@@ -143,6 +144,7 @@ class Passenger:
 #     mu_list.append(mu)
 
 #####################################################################################################################
+#Plotting the means of onboard passengers at each stop with baseline and changing rates
 
 # S1_stops = ['Altona A', 'Jungfernstieg A', 'Berliner Tor A', 'Barmbek A', 'Ohlsdorf A', 'Ohlsdorf B', 'Barmbek B', 'Berliner Tor B', 'Jungfernstieg B', 'Altona B']
 
@@ -150,9 +152,9 @@ class Passenger:
 # for rate in passenger_onboard_changing_rate:
 #     mean_passenger = passenger_onboard_baseline * (1 + rate)
 #     means_passenger_onboard.append(mean_passenger)
-# # print(means_passenger_onboard)
+# print(means_passenger_onboard)
 # bars = plt.bar(S1_stops, means_passenger_onboard, color='gray', alpha=0.7)
-# plt.title('Stop specific Means of Onboard Passengers with\nBaseline and Changing Rates', fontsize=8)
+# plt.title('Stop-specific Means of Onboard Passengers with\nBaseline and Changing Rates', fontsize=8)
 # plt.xticks(rotation=30, fontsize=8)  # Rotate x-axis labels for better visibility
 # plt.yticks([0, 10, 20, 30], fontsize=8)
 # # Add a dashed gray line at passenger_onboard_baseline
@@ -163,7 +165,8 @@ class Passenger:
 
 # # Add passenger_onboard_changing_rate values on top of each bar
 # for bar, rate in zip(bars, passenger_onboard_changing_rate):
-#     plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height()+0.05, f'{round(rate * 100, 2)}%', ha='center', va='bottom', fontsize=8)
+#     sign = '+' if rate >= 0 else '-'
+#     plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height()+0.05, f'{sign}{round(abs(rate) * 100, 2)}%', ha='center', va='bottom', fontsize=8)
 # plt.ylim(bottom = 0, top = 30)
 # plt.tight_layout()
 # plt.savefig('D:\\Nextcloud\\Data\\MA\\Code\\PyCode_MA\\Outputs\\means_of_onboard_passenger.png', dpi = 300)

@@ -75,7 +75,6 @@ class Avg_Train_Load:
     def process_avg_results(self, main_dir, sub_dir):
         train_load = Train_Load_Results(main_dir, sub_dir, selection_mode = self.selection_mode)
         final_results = train_load.extract_train_load_data()
-        # print(final_results)
 
         results, avg_results = self.initialize_avg_results(final_results)
         avg_results['Seed_Time_Intensity'] = avg_results['Seed_Time_Intensity'].apply(self.replace_start_seed)

@@ -338,7 +338,9 @@ class Transport_Simulator:
         revenue_instance = Revenue_Result(main_dir, sub_dir, self.selection_mode)
         revenue_result = revenue_instance.calculate_total_revenue_for_instance()
         return revenue_result
-    
+
+
+# Debugging and Testing:    
 
 # test_run = Transport_Simulator(passenger_baseline_intensity_over_time = 'constant', 
 #                                 STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'uniform', 

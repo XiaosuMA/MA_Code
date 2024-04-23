@@ -201,14 +201,14 @@ class Policy_Plot:
             plt.text(i + width/2, imaginary_revenues_fcfs[i] + 0.01, sign + "{:.2f}%".format(abs(residual)*100), ha='center', va='bottom', fontsize=12)
 
         max_imaginary_revenue = max(max(imaginary_revenues_random), max(imaginary_revenues_fcfs))
-        plt.axhline(y=max_imaginary_revenue, color='red', alpha = 0.3, linestyle='--')
+        # plt.axhline(y=max_imaginary_revenue, color='red', alpha = 0.3, linestyle='--')
+        plt.title('Imaginary Revenue Ratios')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         plt.legend(fontsize=12 ,loc='upper right')
         if self.passenger_demand_mode == 'constant':
             plt.ylim([0.4, max_imaginary_revenue + 0.1])
         elif self.passenger_demand_mode == 'linear':
             plt.ylim([0.4, max_imaginary_revenue + 0.1])
-        # plt.yticks([])
         plt.gca().yaxis.set_major_formatter(formatter)
         y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
         y_label.set_position((0, 1))
@@ -218,44 +218,6 @@ class Policy_Plot:
         plt.show()
 
 
-    # def plot_reject_all_revenue_percentage(self, avg_results: pd.DataFrame):
-    #     x_ticks = []
-    #     reject_all_revenues_random = []
-    #     reject_all_revenues_fcfs = []
-    #     for row in range(0, len(avg_results), 2):
-    #         policy = [avg_results.loc[row,'Policy_abbr'], avg_results.loc[row+1,'Policy_abbr']]
-    #         reject_all_random = float(avg_results.loc[row,'Reject_All_Revenue, PFA Ratio'].split(',')[1].strip())
-    #         reject_all_fcfs = float(avg_results.loc[row+1,'Reject_All_Revenue, PFA Ratio'].split(',')[1].strip())
-    #         x_ticks.append(policy)
-    #         reject_all_revenues_random.append(reject_all_random)
-    #         reject_all_revenues_fcfs.append(reject_all_fcfs)
-
-    #     x_ticks = [r'$\pi_0$', r'$\pi_1$', r'$\pi_2$', r'$\pi_3$', r'$\pi_4$', r'$\pi_5$']
-    #     x = np.arange(len(x_ticks))  # the label locations
-    #     width = 0.35  # the width of the bars
-
-    #     plt.bar(x - width/2, reject_all_revenues_random, width, label='Random', alpha=0.5, color='gray')
-    #     plt.bar(x + width/2, reject_all_revenues_fcfs, width, label='FCFS', alpha=1, color='gray')
-
-    #     for i, v in enumerate(reject_all_revenues_random):
-    #         diff = v - 1
-    #         sign = '+' if diff >= 0 else '-'
-    #         plt.text(i - width/2, v + 0.01, sign + "{:.2f}%".format(abs(diff)*100), ha='center', va='bottom', fontsize=12)
-    #     for i, v in enumerate(reject_all_revenues_fcfs):
-    #         diff = v - 1
-    #         sign = '+' if diff >= 0 else '-'
-    #         plt.text(i + width/2, v + 0.01, sign + "{:.2f}%".format(abs(diff)*100), ha='center', va='bottom', fontsize=12)
-    #     plt.axhline(y=1.0, color='black', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=1.0 
-    #     plt.legend(fontsize=12 ,loc='upper right')
-    #     plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-    #     if self.passenger_demand_mode == 'constant':
-    #         plt.ylim(bottom=0.8)
-    #     elif self.passenger_demand_mode == 'linear':
-    #         plt.ylim(bottom=0.8)
-    #     plt.yticks([])
-    #     plt.tight_layout()
-    #     plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Reject_All_Revenue_vs_Policy.png')
-    #     plt.show()
 
     def plot_reject_all_revenue_percentage(self, avg_results: pd.DataFrame):
         x_ticks = []
@@ -284,7 +246,7 @@ class Policy_Plot:
 
         # plt.axhline(y=1.0, color='black', alpha = 0.3, linestyle='--')
         plt.legend(fontsize=12 ,loc='upper right')
-        plt.title('Reject All Revenue Ratios')
+        plt.title('All Rejection Revenue Ratios')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         if self.passenger_demand_mode == 'constant':
             plt.ylim(bottom=1.0)
@@ -299,40 +261,6 @@ class Policy_Plot:
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Reject_All_Revenue_vs_Policy.png')
         plt.show()
 
-    # def plot_delay_0_delivery_percentage(self, avg_results: pd.DataFrame):
-    #     x_ticks = []
-    #     delay_0_delivery_random = []
-    #     delay_0_delivery_fcfs = []
-    #     for row in range(0, len(avg_results), 2):
-    #         policy = [avg_results.loc[row,'Policy_abbr'], avg_results.loc[row+1,'Policy_abbr']]
-    #         delay_0_random = float(avg_results.loc[row,'Delay_0_delivery (of delivery)'].split(',')[1].strip())
-    #         delay_0_fcfs = float(avg_results.loc[row+1,'Delay_0_delivery (of delivery)'].split(',')[1].strip())
-    #         x_ticks.append(policy)
-    #         delay_0_delivery_random.append(delay_0_random)
-    #         delay_0_delivery_fcfs.append(delay_0_fcfs)
-
-    #     x_ticks = [r'$\pi_0$', r'$\pi_1$', r'$\pi_2$', r'$\pi_3$', r'$\pi_4$', r'$\pi_5$']
-    #     x = np.arange(len(x_ticks))  # the label locations
-    #     width = 0.35  # the width of the bars
-
-    #     plt.bar(x - width/2, delay_0_delivery_random, width, label='Random', alpha=0.5, color='gray')
-    #     plt.bar(x + width/2, delay_0_delivery_fcfs, width, label='FCFS', alpha=1, color='gray')
-
-    #     for i, v in enumerate(delay_0_delivery_random):
-    #         plt.text(i - width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-    #     for i, v in enumerate(delay_0_delivery_fcfs):
-    #         plt.text(i + width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-
-    #     plt.legend(fontsize=12 ,loc='upper right')
-    #     plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-    #     if self.passenger_demand_mode == 'constant':
-    #         plt.ylim(bottom=0.8)
-    #     elif self.passenger_demand_mode == 'linear':
-    #         plt.ylim(bottom=0.8)
-    #     plt.yticks([])
-    #     plt.tight_layout()
-    #     plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_0_delivery_vs_Policy.png')
-    #     plt.show()
 
     def plot_delay_0_delivery_percentage(self, avg_results: pd.DataFrame):
         x_ticks = []
@@ -375,40 +303,6 @@ class Policy_Plot:
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_0_delivery_vs_Policy.png')
         plt.show()
 
-    # def plot_none_delay_percentage(self, avg_results: pd.DataFrame):
-    #     x_ticks = []
-    #     none_delay_random = []
-    #     none_delay_fcfs = []
-    #     for row in range(0, len(avg_results), 2):
-    #         policy = [avg_results.loc[row,'Policy_abbr'], avg_results.loc[row+1,'Policy_abbr']]
-    #         none_random = float(avg_results.loc[row,'None_Delay (of accepted)'].split(',')[1].strip())
-    #         none_fcfs = float(avg_results.loc[row+1,'None_Delay (of accepted)'].split(',')[1].strip())
-    #         x_ticks.append(policy)
-    #         none_delay_random.append(none_random)
-    #         none_delay_fcfs.append(none_fcfs)
-
-    #     x_ticks = [r'$\pi_0$', r'$\pi_1$', r'$\pi_2$', r'$\pi_3$', r'$\pi_4$', r'$\pi_5$']
-    #     x = np.arange(len(x_ticks))  # the label locations
-    #     width = 0.35  # the width of the bars
-
-    #     plt.bar(x - width/2, none_delay_random, width, label='Random', alpha=0.5, color='gray')
-    #     plt.bar(x + width/2, none_delay_fcfs, width, label='FCFS', alpha=1, color='gray')
-
-    #     for i, v in enumerate(none_delay_random):
-    #         plt.text(i - width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-    #     for i, v in enumerate(none_delay_fcfs):
-    #         plt.text(i + width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-
-    #     plt.legend(fontsize=12 ,loc='upper right')
-    #     plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-    #     if self.passenger_demand_mode == 'constant':
-    #         plt.ylim(bottom=0.6)
-    #     elif self.passenger_demand_mode == 'linear':
-    #         plt.ylim(bottom=0.6)
-    #     plt.yticks([])
-    #     plt.tight_layout()
-    #     plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\None_Delay_accepted_vs_Policy.png')
-    #     plt.show()
         
     def plot_none_delay_percentage(self, avg_results: pd.DataFrame):
         x_ticks = []
@@ -452,37 +346,6 @@ class Policy_Plot:
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\None_Delay_accepted_vs_Policy.png')
         plt.show()
 
-    # def plot_delay_nan_waiting_percentage(self, avg_results: pd.DataFrame):
-    #     x_ticks = []
-    #     delay_nan_waiting_random = []
-    #     delay_nan_waiting_fcfs = []
-    #     for row in range(0, len(avg_results), 2):
-    #         policy = [avg_results.loc[row,'Policy_abbr'], avg_results.loc[row+1,'Policy_abbr']]
-    #         delay_nan_random = float(avg_results.loc[row,'Delay_nan_waiting'].split(',')[1].strip())
-    #         delay_nan_fcfs = float(avg_results.loc[row+1,'Delay_nan_waiting'].split(',')[1].strip())
-    #         x_ticks.append(policy)
-    #         delay_nan_waiting_random.append(delay_nan_random)
-    #         delay_nan_waiting_fcfs.append(delay_nan_fcfs)
-
-    #     x_ticks = [r'$\pi_0$', r'$\pi_1$', r'$\pi_2$', r'$\pi_3$', r'$\pi_4$', r'$\pi_5$']
-    #     x = np.arange(len(x_ticks))  # the label locations
-    #     width = 0.35  # the width of the bars
-
-    #     plt.bar(x - width/2, delay_nan_waiting_random, width, label='Random', alpha=0.5, color='gray')
-    #     plt.bar(x + width/2, delay_nan_waiting_fcfs, width, label='FCFS', alpha=1, color='gray')
-
-    #     for i, v in enumerate(delay_nan_waiting_random):
-    #         plt.text(i - width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-    #     for i, v in enumerate(delay_nan_waiting_fcfs):
-    #         plt.text(i + width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
-
-    #     plt.legend(fontsize=12 ,loc='upper right')
-    #     plt.xticks(x, x_ticks, rotation=0, fontsize=14)
-    #     plt.ylim(bottom=0.0, top=0.20)
-    #     plt.yticks([])
-    #     plt.tight_layout()
-    #     plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Policy_Selection_Outputs\Passenger_{self.passenger_demand_mode}\Trade_off_pics\Delay_nan_waiting_accepted_vs_Policy.png')
-    #     plt.show()
 
     def plot_remaining_request_percentage(self, avg_results: pd.DataFrame):
         x_ticks = []
@@ -587,11 +450,12 @@ class Policy_Plot:
         plt.bar(x + width/2, total_passenger_extra_fcfs, width, label='FCFS', alpha=1, color='gray')
 
         for i, v in enumerate(total_passenger_extra_random):
-            plt.text(i - width/2, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom', fontsize = 12)
+            plt.text(i - width/2, v + 0.03, "{:.1f}".format(v), ha='center', va='bottom', fontsize = 12)
         for i, v in enumerate(total_passenger_extra_fcfs):
-            plt.text(i + width/2, v + 0.01, "{:.2f}".format(v), ha='center', va='bottom', fontsize = 12)
+            plt.text(i + width/2, v + 0.03, "{:.1f}".format(v), ha='center', va='bottom', fontsize = 12)
 
         plt.legend(fontsize=12 ,loc='upper right')
+        plt.title('Total Passenger Extra')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         plt.ylim(bottom=0.0)
         # plt.yticks([])
@@ -620,11 +484,12 @@ class Policy_Plot:
         plt.bar(x + width/2, avg_train_load_fcfs, width, label='FCFS', alpha=1, color='gray')
 
         for i, v in enumerate(avg_train_load_random):
-            plt.text(i - width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
+            plt.text(i - width/2, v + 0.02, "{:.1f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
         for i, v in enumerate(avg_train_load_fcfs):
-            plt.text(i + width/2, v + 0.01, "{:.2f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
+            plt.text(i + width/2, v + 0.024, "{:.1f}%".format(v*100), ha='center', va='bottom', fontsize = 12)
 
         plt.legend(fontsize=12 ,loc='upper right')
+        plt.title('Average Train Load Percentage')
         plt.xticks(x, x_ticks, rotation=0, fontsize=14)
         plt.ylim(bottom=0.5)
         # plt.yticks([])
@@ -639,8 +504,10 @@ class Policy_Plot:
 
 
 ############################################################################################################
-plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
-plots.plot_all()
+# # Plottings fdor all figs:
+
+# plots = Policy_Plot(passenger_demand_mode='constant', data_description='request')
+# plots.plot_all()
 
 # plots = Policy_Plot(passenger_demand_mode='linear', data_description='request')
 # plots.plot_all()

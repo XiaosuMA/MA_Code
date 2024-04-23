@@ -45,14 +45,14 @@ class Intensity_Plot:
             self.plot_avg_revenue_total_with_intensity(data_list)
             self.plot_imaginary_revenue_percentage(data_list)
             self.plot_reject_all_percentage(data_list)
-            self.plot_none_delay(data_list)
-            self.plot_delay_ture_of_accepted(data_list)
-            self.plot_delay_0_delivery(data_list)
+            # self.plot_none_delay(data_list)
+            # self.plot_delay_ture_of_accepted(data_list)
+            # self.plot_delay_0_delivery(data_list)
             self.plot_delivery_percentage(data_list)
-            self.plot_delay_true_waiting(data_list)
+            # self.plot_delay_true_waiting(data_list)
             self.plot_combined(data_list)
-            self.plot_delay_nan_waiting(data_list)
-            self.plot_failed_loading(data_list)
+            # self.plot_delay_nan_waiting(data_list)
+            # self.plot_failed_loading(data_list)
             
         elif self.data_description == 'train_load':
             data_list = self.generate_data_list()
@@ -521,7 +521,7 @@ class Intensity_Plot:
         # Plot Delay_true_waiting, % to Accepted, How many worst case
         self.plot_on_ax(data_list, ax, 'Delay_true_waiting', '--', 'Intensity vs Delay_true_waiting, of accepted', 'Delay_true_waiting, of accepted', False, False)
 
-        plt.title('Delay Ratios and Worst-case Ratios (out of accepted)')
+        plt.title('Delay Ratios and Worst-case Ratios') # (out of accepted)
         plt.tight_layout()
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Combine_Delay_True_and_Delay_true_waiting.png', dpi = 300)
         plt.show()
@@ -675,7 +675,7 @@ class Intensity_Plot:
             y_max_2 = max(y_max_2, spl(2.0))
             y_max_2p5 = max(y_max_2p5, spl(2.5))
             plt.plot(xnew, y_smooth, label=policy, alpha = 1.0 , color=color) 
-        plt.title('Delivered Request Ratios (out of total)')
+        plt.title('Delivered Request Ratios') # (out of total requests number)
         plt.axhline(y=0.5, color='red', alpha = 0.3, linestyle='--')  # Add horizontal dashed line at y=0.5, more than half of cargos should be delivered by ÖPNV
         plt.annotate('50%', xy=(1, 0.5), xytext=(8, 0), 
                     xycoords=('axes fraction', 'data'), textcoords='offset points')
@@ -930,7 +930,7 @@ class Intensity_Plot:
             plt.annotate(label, (x_points[i], y_points[i]), textcoords="offset points", xytext=(0,7), ha='center')
         plt.xlabel('Intensity')
         plt.ylabel('Average Train Load Percentage')
-        plt.legend()# fontsize='small'
+        plt.legend(fontsize='small')# 
         plt.ylim(bottom=0.4)
         plt.gca().yaxis.set_major_formatter(formatter)
         y_label = plt.gca().set_ylabel('(%)', labelpad=-20)
@@ -992,6 +992,7 @@ class Intensity_Plot:
         plt.savefig(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs\Passenger_{self.passenger_demand_mode}/Intensity_vs_Avg_STU_Onboard.png', dpi = 300)
         plt.show()
 
+# #Plotting the graphs:
 
 # check_run = Intensity_Plot(passenger_demand_mode = 'constant', data_description = 'request')
 # check_run.plot_all()

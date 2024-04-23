@@ -203,7 +203,7 @@ class STU_Request:
             revenues.append(r)
         return revenues
 
-
+# Debugging Test:
 # stu_request_instance = STU_Request(STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'hermes_peaks', random_seed = 2024, simulation_time = 255, intensity_medium = 2.25)
 # STU_requests_df = stu_request_instance.generate_STU_requests_df()
 # revenues_distribution = stu_request_instance.plot_revenues_distribution(STU_requests_df)
@@ -213,6 +213,8 @@ class STU_Request:
 
 
 ############################################################################################################################################################################
+## plot the station probability distribution
+
 # hermes_peaks_prob = [0.22348367029548988, 0.14914463452566096, 0.12779937791601867, 0.31912908242612753, 0.18044323483670296]
 # uniform_prob = [0.2, 0.2, 0.2, 0.2, 0.2]
 # S1_stations = ['Altona', 'Jungfernstieg', 'Berliner Tor', 'Barmbek', 'Ohlsdorf'] 
@@ -228,7 +230,7 @@ class STU_Request:
 
 # # plt.xlabel('S1 Stations')
 # # plt.ylabel('Probability')
-# plt.title('Departure(/Destination) Probability Distribution', fontsize=8)
+# plt.title('Station Probability Distribution', fontsize=8)
 # plt.xticks(index + bar_width / 2, S1_stations, fontsize=8)  # Center x-axis labels for better visibility
 # plt.yticks([0.0, 0.10, 0.20, 0.30], fontsize=8)  # Set y-ticks
 # # Set legend names and position

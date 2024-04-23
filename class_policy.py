@@ -5,7 +5,7 @@ import logging
 
 
 class Policy:
-    rejection_revenue = 4.5 # 3.5
+    rejection_revenue = 4.5 
 
     def __init__(self, decision_1_policy: str, decision_2_policy: str, random_seed: int):
         self.decision_1_policy = decision_1_policy

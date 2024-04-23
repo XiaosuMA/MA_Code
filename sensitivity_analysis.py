@@ -52,8 +52,10 @@ for sensitivity in ['STU_Demand_Station_Intensity']:
                                                 'Decision_1': [decision_1], 'Decision_2': [decision_2], 'Seed': [seed], 'Execution_Time': [td]})
                         excution_time = pd.concat([excution_time, new_row], ignore_index=True)
 
+
+# # Output excution_time to csv:
+
 dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\Sensitivity_Analysis_Outputs\{sensitivity_pattern_set[1]}_Sensitivity'
 filename = f'execution_time_Station_{STU_arrival_over_station_set[1]}.csv'
 full_path = os.path.join(dir, filename)
-
 pd.DataFrame.to_csv(excution_time, full_path, index = False)

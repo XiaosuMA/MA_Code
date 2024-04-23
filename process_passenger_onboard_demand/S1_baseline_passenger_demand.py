@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-S1 = pd.read_csv('S1_Passenger_Data_2019.csv', encoding='latin-1')
+S1 = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\S1_Passenger_Data_2019.csv', encoding='latin-1')
 # drop rows from Stops 'Rissen' to ''Bahrenfeld'
 S1 = S1.drop(S1.index[0:8])
 # reverse the order of stops to calculate backward passengers onboard for each stop
@@ -66,7 +66,18 @@ S1_W.loc[5, 'Passenger_Onboard_W'] = S1_W.loc[0, 'Passenger_Onboard_W'] + S1_W.l
 passenger_onboard_w(6, 20)
 
 S1_W
+
+# S1_to_P = S1_P.copy()
+# S1_to_W = S1_W.copy()
+# # change columne names for S1_P and S1_W before mergen
+# S1_to_P.columns = ['Stops', 'Embarking', 'Alighting', 'Passenger_Onboard']
+# S1_to_W.columns = ['Stops', 'Embarking', 'Alighting', 'Passenger_Onboard']
+# #concate S1_to_P and S1_to_W
+# S1_P_W = pd.concat([S1_to_P, S1_to_W], axis=0).reset_index(drop=True)
+# S1_P_W.to_csv(r'D:\Nextcloud\Data\MA\Code\PyCode_MA\Calculated_S1_Onboard_Passenger_Numbers.csv', index=False)
+
 #############################################################################################################
+
 # Get selected stops data for stops 'Ohlsdorf', 'Barmbek', 'Berliner Tor', 'Junfernstieg', 'Altona'
 S1_P = S1_P.iloc[[5, 8, 13, 15, 20], :].reset_index(drop=True)
 # reverse to correspond network direction

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-S1 = pd.read_csv('S1_Passenger_Data_2019.csv', encoding='latin-1')
+S1 = pd.read_csv(rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\S1_Passenger_Data_2019.csv', encoding='latin-1')
 # drop rows from Stops 'Rissen' to ''Bahrenfeld'
 S1 = S1.drop(S1.index[0:8])
 # reverse rows last row becons first row and first row becons last row, reset index
@@ -165,37 +165,6 @@ init_load_data.loc[init_load_data['Train_ID'] == 0, 'Passenger_Extra'] = 0
 
 #########################################################################################################################
 
-# arrival_time = timetable_df['Arrival_Time'].copy()
-# bins = range(0, 10*60+1, 30)  # create bins of 30 minutes from 0 to 10*60 (total minutes in 10 hours)
-# labels = [f'{i/30}' for i in bins[:-1]]  # create labels for the bins in 0,1,2,3... format
-# group = pd.DataFrame()
-# group['Group'] = pd.cut(arrival_time, bins=bins, labels=labels, include_lowest=True)
-# arrival_time = pd.concat([arrival_time, group], axis=1)
-# arrival_time['Stop'] = timetable_df['Stop'].copy()
-
-# # find the columns where Stop equal 0 or equal 5
-# # only sart stops need to time dependent passenger demand
-# start_0 = arrival_time.loc[(arrival_time['Stop'] == 0)].copy()
-# start_5 = arrival_time.loc[(arrival_time['Stop'] == 5)].copy()
-# # Now we know how many start_demand_0/5 for each group of time to create
-# # start_demand_0/5 increasing linearly based on Group information in arrival_time
-# start_stop_0 = [] # Altona_A
-# for index, data in start_0.iterrows():
-#     s_0 = np.random.normal(passenger_altona_avg + intensity_linear_rate*float(data['Group']), passenger_demand_std[0])
-#     start_stop_0.append(s_0)
-
-# start_stop_5 = [] # Ohlsdorf_B
-# for index, data in start_5.iterrows():
-#     s_5 = np.random.normal(passenger_ohlsdorf_avg + intensity_linear_rate*float(data['Group']), passenger_demand_std[1])
-#     start_stop_5.append(s_5)
-
-# # start_0['Passenger_Demand'] = np.round(start_stop_0, 0)
-# # start_5['Passenger_Demand'] = np.round(start_stop_5, 0)
-# passenger_demand_0_5[0] = np.round(start_stop_0, 0) # all passenger onboard demand for start stop Altona_A
-# passenger_demand_0_5[1] = np.round(start_stop_5, 0) # all passenger onboard demand for start stop Ohlsdorf_B
-
-#########################################################################################################################
-
 def generate_start_passenger_onboard(timetable_df, passenger_altona_avg, passenger_ohlsdorf_avg, intensity_linear_rate, passenger_demand_std):
     # find the columns where Stop equal 0 or equal 5
     # only sart stops need to time dependent passenger demand
@@ -223,8 +192,7 @@ def generate_start_passenger_onboard(timetable_df, passenger_altona_avg, passeng
 passenger_demand_0_5 = generate_start_passenger_onboard(timetable_df, passenger_altona_avg, passenger_ohlsdorf_avg, intensity_linear_rate, passenger_demand_std)
 
 def passenger_demand_generator(timetable_df, stops, passenger_demand_0_5, changing_rates, load_data):
-    # Passenger_demand_0 = np.floor(np.abs(np.random.normal(passenger_demand_mean[0], passenger_demand_std[0], len(timetable_df[timetable_df['Stop']==0]))).astype(float))
-    # Passenger_demand_5 = np.floor(np.abs(np.random.normal(passenger_demand_mean[1], passenger_demand_std[1], len(timetable_df[timetable_df['Stop']==5]))).astype(float))
+
     load_data.loc[(load_data['Stop'] == 0), 'Passenger_Demand'] = passenger_demand_0_5[0]
     load_data.loc[(load_data['Stop'] == 5), 'Passenger_Demand'] = passenger_demand_0_5[1]
 
@@ -245,6 +213,9 @@ def passenger_demand_generator(timetable_df, stops, passenger_demand_0_5, changi
     return init_load_data 
 
 init_load_data = passenger_demand_generator(timetable_df, stops, passenger_demand_0_5, changing_rates, init_load_data) 
+
+
+# # Debugging and Testing:
 
 # init_load_data.loc[init_load_data['Train_ID'] == 6]
 # init_load_data[init_load_data['Stop'] == 1]

@@ -24,7 +24,7 @@ for passenger_demand_mode in passenger_demand_mode_set:
         for arrival_intensity in arrival_intensity_list:
             # load_status[arrival_intensity] = {}
             # STU_status[arrival_intensity] = {}
-            for seed in range(1925, 2025): # + 50 seeds (1925, 1975)# + 30 seeds (1975, 2005) # 20 seeds (2005, 2025)
+            for seed in range(1925, 2025):
                 # record current timestamp
                 loop_start = datetime.now()
                 test_run = Transport_Simulator(passenger_baseline_intensity_over_time = passenger_demand_mode, 
@@ -52,6 +52,8 @@ for passenger_demand_mode in passenger_demand_mode_set:
             # revenue_result = test_run.get_revenue_data()
             # results[arrival_intensity] = revenue_result
 
+
+# #Output excution_time to csv:
 dir = rf'D:\Nextcloud\Data\MA\Code\PyCode_MA\Outputs\STU_Time_Intensity_Selection_Outputs'
 filename = f'execution_time.csv'
 full_path = os.path.join(dir, filename)
