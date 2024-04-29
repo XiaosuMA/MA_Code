@@ -203,7 +203,8 @@ class STU_Request:
             revenues.append(r)
         return revenues
 
-# Debugging Test:
+# # Debugging Test:
+
 # stu_request_instance = STU_Request(STU_arrival_over_time = 'constant_medium', STU_arrival_over_station = 'hermes_peaks', random_seed = 2024, simulation_time = 255, intensity_medium = 2.25)
 # STU_requests_df = stu_request_instance.generate_STU_requests_df()
 # revenues_distribution = stu_request_instance.plot_revenues_distribution(STU_requests_df)

@@ -332,6 +332,6 @@ class Case_Plot:
 ############################################################################################################
 # # Plotting the results:
 
-test_plot = Case_Plot()
+# test_plot = Case_Plot()
 # test_plot.concat_avg_results()
-test_plot.plot_all()
+# test_plot.plot_all()
